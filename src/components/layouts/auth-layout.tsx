@@ -13,11 +13,11 @@ export function AuthLayout({ children, title, subtitle }: { children: React.Reac
         </Link>
         <div>
           <h2 className="text-4xl font-bold mb-4">Invoice Profesional, Bisnis Lebih Cuan.</h2>
-          <p className="text-lg text-white">
+          <p className="text-lg text-foreground/80">
             Platform invoice & client management untuk freelancer & UMKM Indonesia.
           </p>
         </div>
-        <div className="text-sm text-white/90">© 2026 InvoiceForge. All rights reserved.</div>
+        <div className="text-sm text-muted-foreground">© 2026 InvoiceForge. All rights reserved.</div>
       </div>
 
       <div className="flex items-center justify-center p-6 sm:p-12 bg-background">
