@@ -37,7 +37,6 @@ export function LoginForm() {
     }
     toast.success("Berhasil masuk");
     router.push("/dashboard");
-    router.refresh();
   };
 
   return (
