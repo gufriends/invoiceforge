@@ -9,6 +9,14 @@ on:
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./test.db
+      DIRECT_URL: file:./test.db
+      AUTH_SECRET: dummy-secret-for-ci-32chars123456789
+      AUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_NAME: InvoiceForge
     steps:
       - uses: actions/checkout@v4
 
@@ -16,43 +24,85 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: npx prisma generate
+        run: pnpm prisma generate
+
+      - name: Push database schema
+        run: pnpm prisma db push --skip-generate
 
       - name: Type check
-        run: npx tsc --noEmit
+        run: pnpm tsc --noEmit
 
       - name: Run tests
-        run: npm test -- --run
+        run: pnpm test -- --run
 
   build:
     needs: lint-and-test
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: file:./build.db
+      DIRECT_URL: file:./build.db
+      AUTH_SECRET: dummy-secret-for-ci-32chars123456789
+      AUTH_URL: http://localhost:3000
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_NAME: InvoiceForge
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
-      - run: npm ci
-      - run: npx prisma generate
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma generate
 
       - name: Build
-        env:
-          DATABASE_URL: file:./build.db
-          AUTH_SECRET: dummy-secret-for-build-only-32chars
-          AUTH_URL: http://localhost:3000
-          NEXTAUTH_URL: http://localhost:3000
         run: |
-          npx prisma db push --skip-generate
-          npm run build
+          pnpm prisma db push --skip-generate
+          pnpm build
 
   docker:
     needs: build
