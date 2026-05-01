@@ -12,18 +12,7 @@ export const authConfig = {
     signIn: "/login",
     error: "/login",
   },
-  providers: [
-    Credentials({
-      async authorize(credentials) {
-        const parsed = loginSchema.safeParse(credentials);
-        if (!parsed.success) return null;
-
-        // Authorize logic ada di src/auth.ts (non-edge)
-        // Di sini hanya schema validation
-        return null;
-      },
-    }),
-  ],
+  providers: [],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
