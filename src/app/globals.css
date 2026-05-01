@@ -31,8 +31,10 @@
   --foreground: 15 23 42; /* slate-900 */
   --card: 255 255 255;
   --card-foreground: 15 23 42;
+  --popover: 255 255 255;
+  --popover-foreground: 15 23 42;
   --border: 226 232 240; /* slate-200 */
-  --input: 226 232 240;
+  --input: 203 213 225; /* slate-300 — slightly darker for visibility */
   --ring: 37 99 235; /* primary-600 */
   --primary: 37 99 235;
   --primary-foreground: 255 255 255;
@@ -44,6 +46,29 @@
   --accent-foreground: 15 23 42;
   --destructive: 220 38 38;
   --destructive-foreground: 255 255 255;
+  --success: 22 163 74;
+  --success-foreground: 255 255 255;
+  --warning: 234 88 12;
+  --warning-foreground: 255 255 255;
+  --info: 8 145 178;
+  --info-foreground: 255 255 255;
+  --radius: 0.5rem;
+
+  /* Chart colors */
+  --chart-1: 37 99 235;
+  --chart-2: 22 163 74;
+  --chart-3: 234 88 12;
+  --chart-4: 124 58 237;
+  --chart-5: 8 145 178;
+
+  /* Invoice status colors */
+  --status-draft: 100 116 139;
+  --status-sent: 37 99 235;
+  --status-viewed: 14 165 233;
+  --status-partial: 234 88 12;
+  --status-paid: 22 163 74;
+  --status-overdue: 220 38 38;
+  --status-cancelled: 148 163 184;
 }
 
 .dark {
@@ -51,8 +76,10 @@
   --foreground: 241 245 249;
   --card: 30 41 59; /* slate-800 */
   --card-foreground: 241 245 249;
+  --popover: 30 41 59;
+  --popover-foreground: 241 245 249;
   --border: 51 65 85;
-  --input: 51 65 85;
+  --input: 71 85 105; /* slate-600 — slightly lighter for better visibility */
   --ring: 59 130 246;
   --primary: 59 130 246;
   --primary-foreground: 15 23 42;
@@ -64,6 +91,28 @@
   --accent-foreground: 241 245 249;
   --destructive: 239 68 68;
   --destructive-foreground: 15 23 42;
+  --success: 34 197 94;
+  --success-foreground: 15 23 42;
+  --warning: 249 115 22;
+  --warning-foreground: 15 23 42;
+  --info: 6 182 212;
+  --info-foreground: 15 23 42;
+
+  /* Chart colors dark */
+  --chart-1: 59 130 246;
+  --chart-2: 34 197 94;
+  --chart-3: 249 115 22;
+  --chart-4: 139 92 246;
+  --chart-5: 6 182 212;
+
+  /* Invoice status colors dark */
+  --status-draft: 148 163 184;
+  --status-sent: 59 130 246;
+  --status-viewed: 56 189 248;
+  --status-partial: 249 115 22;
+  --status-paid: 34 197 94;
+  --status-overdue: 239 68 68;
+  --status-cancelled: 100 116 139;
 }
 
 * {
