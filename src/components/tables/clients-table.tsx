@@ -33,7 +33,7 @@ export function ClientsTable({ data, loading, onDelete }: Props) {
   if (loading) return <TableSkeleton rows={6} />;
 
   return (
-    <div className="rounded-md border">
+    <div className="overflow-x-auto rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -66,7 +66,7 @@ export function ClientsTable({ data, loading, onDelete }: Props) {
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Aksi klien ${c.name}`}>
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
