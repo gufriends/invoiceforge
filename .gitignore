@@ -6,3 +6,6 @@ dev.db
 dev.db-journal
 .DS_Store
 .vercel
+playwright-report/
+test-results/
+e2e/.auth/
