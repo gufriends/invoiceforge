@@ -19,9 +19,9 @@ export const clientService = {
       ...(search
         ? {
             OR: [
-              { name: { contains: search } },
-              { email: { contains: search } },
-              { company: { contains: search } },
+              { name: { contains: search, mode: "insensitive" as const } },
+              { email: { contains: search, mode: "insensitive" as const } },
+              { company: { contains: search, mode: "insensitive" as const } },
             ],
           }
         : {}),

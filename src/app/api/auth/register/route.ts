@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "EMAIL_EXISTS", message: "Email sudah terdaftar" }, { status: 409 });
     }
 
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(password, 12);
     const user = await prisma.user.create({
       data: {
         name,

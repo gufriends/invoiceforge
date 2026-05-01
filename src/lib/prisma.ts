@@ -4,6 +4,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    "DATABASE_URL is not set. For Supabase + Vercel, use the connection pooler URL (port 6543) with ?pgbouncer=true"
+  );
+}
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({

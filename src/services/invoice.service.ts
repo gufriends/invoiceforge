@@ -33,9 +33,9 @@ export const invoiceService = {
       ...(search
         ? {
             OR: [
-              { invoiceNumber: { contains: search } },
-              { client: { name: { contains: search } } },
-              { client: { company: { contains: search } } },
+              { invoiceNumber: { contains: search, mode: "insensitive" as const } },
+              { client: { name: { contains: search, mode: "insensitive" as const } } },
+              { client: { company: { contains: search, mode: "insensitive" as const } } },
             ],
           }
         : {}),
@@ -140,6 +140,10 @@ export const invoiceService = {
       discountValue: data.discountValue ?? 0,
     });
 
+    const isRecurring = data.isRecurring ?? false;
+    const recurringCycle = data.recurringCycle ?? null;
+    const dueDateObj = new Date(data.dueDate);
+
     return prisma.invoice.create({
       data: {
         userId,
@@ -147,7 +151,7 @@ export const invoiceService = {
         invoiceNumber,
         status: data.status ?? "DRAFT",
         issueDate: new Date(data.issueDate),
-        dueDate: new Date(data.dueDate),
+        dueDate: dueDateObj,
         subtotal: totals.subtotal,
         taxRate: data.taxRate ?? 0,
         taxAmount: totals.taxAmount,
@@ -158,8 +162,9 @@ export const invoiceService = {
         notes: data.notes || null,
         terms: data.terms || null,
         template: data.template ?? "modern",
-        isRecurring: data.isRecurring ?? false,
-        recurringCycle: data.recurringCycle ?? null,
+        isRecurring,
+        recurringCycle,
+        recurringNext: isRecurring && recurringCycle ? dueDateObj : null,
         items: {
           create: data.items.map((it, idx) => ({
             name: it.name,
@@ -180,6 +185,13 @@ export const invoiceService = {
     if (!existing) throw new ApiError("NOT_FOUND", "Invoice tidak ditemukan", 404);
     if (existing.status === "PAID") {
       throw new ApiError("INVOICE_PAID", "Invoice yang sudah lunas tidak bisa diubah", 400);
+    }
+
+    if (data.invoiceNumber && data.invoiceNumber !== existing.invoiceNumber) {
+      const dup = await prisma.invoice.findUnique({
+        where: { userId_invoiceNumber: { userId, invoiceNumber: data.invoiceNumber } },
+      });
+      if (dup) throw new ApiError("DUPLICATE_NUMBER", "Nomor invoice sudah dipakai", 409);
     }
 
     const items = data.items ?? null;

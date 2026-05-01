@@ -20,19 +20,21 @@ export function AuthLayout({ children, title, subtitle }: { children: React.Reac
         <div className="text-sm text-white/90">© 2026 InvoiceForge. All rights reserved.</div>
       </div>
 
-      <div className="flex items-center justify-center p-6 sm:p-12">
+      <div className="flex items-center justify-center p-6 sm:p-12 bg-background">
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden flex items-center gap-2 text-xl font-bold">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <Receipt className="h-6 w-6" />
             </div>
             InvoiceForge
           </div>
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-            {subtitle && <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>}
+          <div className="rounded-2xl bg-card p-8 shadow-soft-lg ring-1 ring-foreground/5">
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
+              {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
+            </div>
+            {children}
           </div>
-          {children}
         </div>
       </div>
     </div>

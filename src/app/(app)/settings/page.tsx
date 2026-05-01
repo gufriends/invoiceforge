@@ -29,7 +29,7 @@ const profileSchema = z.object({
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 function ProfileTab() {
-  const { data: session } = useSession();
+  const { data: session, update: updateSession } = useSession();
   const [saving, setSaving] = useState(false);
 
   const {
@@ -46,11 +46,17 @@ function ProfileTab() {
   const onSubmit = async (data: ProfileFormValues) => {
     setSaving(true);
     try {
-      // TODO: integrate with session update or profile API
-      console.log("[PROFILE] Update name:", data.name);
+      const res = await fetch("/api/auth/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.message ?? "Gagal memperbarui profil");
+      await updateSession({ name: data.name });
       toast.success("Profil diperbarui");
-    } catch {
-      toast.error("Gagal memperbarui profil");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal memperbarui profil");
     } finally {
       setSaving(false);
     }
@@ -310,15 +316,23 @@ function KeamananTab() {
     resolver: zodResolver(changePasswordSchema),
   });
 
-  const onSubmit = async (_data: ChangePasswordValues) => {
+  const onSubmit = async (data: ChangePasswordValues) => {
     setSaving(true);
     try {
-      // TODO: POST to /api/auth/change-password when API is available
-      console.log("[SECURITY] Change password request");
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          currentPassword: data.currentPassword,
+          newPassword: data.newPassword,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.message ?? "Gagal mengubah password");
       toast.success("Password berhasil diubah");
       reset();
-    } catch {
-      toast.error("Gagal mengubah password");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Gagal mengubah password");
     } finally {
       setSaving(false);
     }

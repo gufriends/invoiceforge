@@ -1,5 +1,9 @@
 {
   "installCommand": "pnpm install --no-frozen-lockfile",
   "buildCommand": "pnpm prisma generate && pnpm build",
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "crons": [
+    { "path": "/api/cron/overdue", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/recurring", "schedule": "15 1 * * *" }
+  ]
 }
