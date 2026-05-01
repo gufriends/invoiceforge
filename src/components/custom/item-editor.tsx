@@ -46,7 +46,7 @@ export function ItemEditor({ items, onChange, currency = "IDR", disabled }: Item
               return (
                 <tr key={idx} className="align-top">
                   <td className="p-3">
-                    <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" />
+                    <GripVertical className="h-4 w-4 text-muted-foreground cursor-grab" aria-hidden="true" />
                   </td>
                   <td className="p-2">
                     <Input
@@ -92,6 +92,7 @@ export function ItemEditor({ items, onChange, currency = "IDR", disabled }: Item
                       onClick={() => remove(idx)}
                       disabled={disabled || items.length <= 1}
                       className="h-8 w-8 text-destructive hover:text-destructive"
+                      aria-label={`Hapus item ${idx + 1}`}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

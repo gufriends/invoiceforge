@@ -82,8 +82,19 @@ export function ResetPasswordForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="password">Password Baru</Label>
-        <Input id="password" type="password" autoComplete="new-password" {...register("password")} />
-        {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+        <Input
+          id="password"
+          type="password"
+          autoComplete="new-password"
+          aria-invalid={!!errors.password}
+          aria-describedby={errors.password ? "password-error" : undefined}
+          {...register("password")}
+        />
+        {errors.password && (
+          <p id="password-error" className="text-xs text-destructive">
+            {errors.password.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
@@ -91,10 +102,14 @@ export function ResetPasswordForm() {
           id="confirmPassword"
           type="password"
           autoComplete="new-password"
+          aria-invalid={!!errors.confirmPassword}
+          aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
           {...register("confirmPassword")}
         />
         {errors.confirmPassword && (
-          <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
+          <p id="confirmPassword-error" className="text-xs text-destructive">
+            {errors.confirmPassword.message}
+          </p>
         )}
       </div>
       <Button type="submit" className="w-full" disabled={loading}>

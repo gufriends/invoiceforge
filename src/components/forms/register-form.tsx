@@ -54,23 +54,70 @@ export function RegisterForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="name">Nama Lengkap</Label>
-        <Input id="name" placeholder="Nama kamu" {...register("name")} />
-        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+        <Input
+          id="name"
+          placeholder="Nama kamu"
+          autoComplete="name"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? "name-error" : undefined}
+          {...register("name")}
+        />
+        {errors.name && (
+          <p id="name-error" className="text-xs text-destructive">
+            {errors.name.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" placeholder="nama@email.com" {...register("email")} />
-        {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+        <Input
+          id="email"
+          type="email"
+          placeholder="nama@email.com"
+          autoComplete="email"
+          aria-invalid={!!errors.email}
+          aria-describedby={errors.email ? "email-error" : undefined}
+          {...register("email")}
+        />
+        {errors.email && (
+          <p id="email-error" className="text-xs text-destructive">
+            {errors.email.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" placeholder="Min. 8 karakter" {...register("password")} />
-        {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+        <Input
+          id="password"
+          type="password"
+          placeholder="Min. 8 karakter"
+          autoComplete="new-password"
+          aria-invalid={!!errors.password}
+          aria-describedby={errors.password ? "password-error" : undefined}
+          {...register("password")}
+        />
+        {errors.password && (
+          <p id="password-error" className="text-xs text-destructive">
+            {errors.password.message}
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
-        <Input id="confirmPassword" type="password" placeholder="Ulangi password" {...register("confirmPassword")} />
-        {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
+        <Input
+          id="confirmPassword"
+          type="password"
+          placeholder="Ulangi password"
+          autoComplete="new-password"
+          aria-invalid={!!errors.confirmPassword}
+          aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
+          {...register("confirmPassword")}
+        />
+        {errors.confirmPassword && (
+          <p id="confirmPassword-error" className="text-xs text-destructive">
+            {errors.confirmPassword.message}
+          </p>
+        )}
       </div>
       <div className="flex items-start gap-2">
         <Checkbox

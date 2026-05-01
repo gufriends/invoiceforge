@@ -33,7 +33,13 @@ export function Topbar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card px-4 pl-16 lg:pl-4 lg:px-6">
-      <Button variant="ghost" size="icon" className="lg:hidden -ml-2" onClick={() => setMobileOpen(true)}>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="lg:hidden -ml-2"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Buka menu"
+      >
         <Menu className="h-5 w-5" />
       </Button>
       <div className="relative flex-1 max-w-md">
@@ -51,11 +57,16 @@ export function Topbar() {
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          aria-label={mounted && theme === "dark" ? "Ganti ke mode terang" : "Ganti ke mode gelap"}
+        >
           {mounted ? (theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <Moon className="h-5 w-5" />}
         </Button>
 
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className="relative" aria-label="Notifikasi">
           <Bell className="h-5 w-5" />
         </Button>
 
