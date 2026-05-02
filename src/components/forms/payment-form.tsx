@@ -23,12 +23,12 @@ import { paymentSchema } from "@/lib/validations";
 import { PAYMENT_METHODS, PAYMENT_METHOD_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/format-currency";
-import type { PaymentFormValues } from "@/types/forms";
+import type { PaymentFormValues, PaymentFormOutput } from "@/types/forms";
 
 interface Props {
   remainingAmount: number;
   initialValues?: Partial<PaymentFormValues>;
-  onSubmit: (data: PaymentFormValues) => void | Promise<void>;
+  onSubmit: (data: PaymentFormOutput) => void | Promise<void>;
   loading?: boolean;
   onCancel?: () => void;
 }
@@ -41,7 +41,7 @@ export function PaymentForm({ remainingAmount, initialValues, onSubmit, loading,
     setValue,
     watch,
     formState: { errors },
-  } = useForm<PaymentFormValues>({
+  } = useForm<PaymentFormValues, unknown, PaymentFormOutput>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       amount: remainingAmount,
@@ -53,9 +53,9 @@ export function PaymentForm({ remainingAmount, initialValues, onSubmit, loading,
     },
   });
 
-  const amount = watch("amount");
-  const date = watch("date");
-  const method = watch("method");
+  const amount = watch("amount") as number;
+  const date = watch("date") as Date | undefined;
+  const method = watch("method") as string;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -106,7 +106,7 @@ export function PaymentForm({ remainingAmount, initialValues, onSubmit, loading,
               name="date"
               control={control}
               render={({ field }) => (
-                <Calendar mode="single" selected={field.value} onSelect={(d) => d && field.onChange(d)} />
+                <Calendar mode="single" selected={field.value as Date | undefined} onSelect={(d) => d && field.onChange(d)} />
               )}
             />
           </PopoverContent>

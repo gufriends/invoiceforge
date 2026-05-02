@@ -20,7 +20,7 @@ export function TopClientsChart({ data }: { data: TopClient[] }) {
         <XAxis type="number" tickFormatter={(v) => formatCurrency(v, "IDR", { compact: true })} fontSize={11} stroke={axisColor} />
         <YAxis type="category" dataKey="clientName" width={120} fontSize={11} stroke={axisColor} />
         <Tooltip
-          formatter={(v: number) => formatCurrency(v)}
+          formatter={(v) => formatCurrency(v as number)}
           contentStyle={{
             backgroundColor: tooltipBg,
             borderRadius: 8,

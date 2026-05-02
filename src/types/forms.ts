@@ -1,93 +1,34 @@
-import type { InvoiceTemplate, DiscountType, RecurringCycle, PaymentMethod, Currency } from "@/lib/constants";
+import type { z } from "zod";
+import type {
+  loginSchema,
+  registerSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  clientSchema,
+  invoiceItemSchema,
+  invoiceBaseSchema,
+  paymentSchema,
+  companySchema,
+} from "@/lib/validations";
 
-export interface LoginFormValues {
-  email: string;
-  password: string;
-}
+// Input types — used as TFieldValues in useForm<TFieldValues, any, TTransformedValues>.
+// Fields with .default() become optional (string | undefined) in the input type,
+// which is what react-hook-form manages in the DOM before the resolver runs.
+export type LoginFormValues = z.input<typeof loginSchema>;
+export type RegisterFormValues = z.input<typeof registerSchema>;
+export type ForgotPasswordFormValues = z.input<typeof forgotPasswordSchema>;
+export type ResetPasswordFormValues = z.input<typeof resetPasswordSchema>;
+export type ClientFormValues = z.input<typeof clientSchema>;
+export type InvoiceItemFormValues = z.input<typeof invoiceItemSchema>;
+export type InvoiceFormValues = z.input<typeof invoiceBaseSchema>;
+export type PaymentFormValues = z.input<typeof paymentSchema>;
+export type CompanyFormValues = z.input<typeof companySchema>;
 
-export interface RegisterFormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  acceptTerms: boolean;
-}
-
-export interface ForgotPasswordFormValues {
-  email: string;
-}
-
-export interface ResetPasswordFormValues {
-  password: string;
-  confirmPassword: string;
-}
-
-export interface ClientFormValues {
-  name: string;
-  email: string;
-  phone: string;
-  company: string;
-  address: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  country: string;
-  npwp: string;
-  notes: string;
-  isActive: boolean;
-}
-
-export interface InvoiceItemFormValues {
-  id?: string;
-  name: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  order: number;
-}
-
-export interface InvoiceFormValues {
-  invoiceNumber: string;
-  clientId: string;
-  issueDate: Date;
-  dueDate: Date;
-  template: InvoiceTemplate;
-  items: InvoiceItemFormValues[];
-  taxRate: number;
-  discountType: DiscountType;
-  discountValue: number;
-  notes: string;
-  terms: string;
-  isRecurring: boolean;
-  recurringCycle: RecurringCycle | null;
-}
-
-export interface PaymentFormValues {
-  amount: number;
-  method: PaymentMethod;
-  date: Date;
-  reference: string;
-  notes: string;
-}
-
-export interface CompanyFormValues {
-  name: string;
-  logo: string;
-  address: string;
-  city: string;
-  province: string;
-  postalCode: string;
-  country: string;
-  phone: string;
-  email: string;
-  website: string;
-  npwp: string;
-  bankName: string;
-  bankAccount: string;
-  bankHolder: string;
-  invoicePrefix: string;
-  invoiceTemplate: InvoiceTemplate;
-  primaryColor: string;
-  currency: Currency;
-  taxRate: number;
-}
+// Output types — used as TTransformedValues in useForm<..., any, OutputType>.
+// These are what the onSubmit callback receives after the zodResolver transforms
+// the raw field values (applies defaults, coercion, etc.).
+export type ClientFormOutput = z.output<typeof clientSchema>;
+export type InvoiceItemFormOutput = z.output<typeof invoiceItemSchema>;
+export type InvoiceFormOutput = z.output<typeof invoiceBaseSchema>;
+export type PaymentFormOutput = z.output<typeof paymentSchema>;
+export type CompanyFormOutput = z.output<typeof companySchema>;

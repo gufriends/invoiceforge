@@ -6,10 +6,10 @@ import { Input } from "@/components/ui/input";
 import { CurrencyInput } from "@/components/custom/currency-input";
 import { formatCurrency } from "@/utils/format-currency";
 import type { ItemEditorProps } from "@/types/component-props";
-import type { InvoiceItemFormValues } from "@/types/forms";
+import type { InvoiceItemFormOutput } from "@/types/forms";
 
 export function ItemEditor({ items, onChange, currency = "IDR", disabled }: ItemEditorProps) {
-  const update = (idx: number, patch: Partial<InvoiceItemFormValues>) => {
+  const update = (idx: number, patch: Partial<InvoiceItemFormOutput>) => {
     const next = items.map((it, i) => (i === idx ? { ...it, ...patch } : it));
     onChange(next);
   };

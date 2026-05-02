@@ -5,7 +5,7 @@ import type { InvoiceWithRelations, InvoiceListItem } from "./invoice";
 import type { Client, ClientWithStats } from "./client";
 import type { Payment } from "./payment";
 import type { Company } from "./company";
-import type { InvoiceItemFormValues } from "./forms";
+import type { InvoiceItemFormOutput } from "./forms";
 
 export interface StatsCardProps {
   title: string;
@@ -97,8 +97,8 @@ export interface ClientSelectProps {
 }
 
 export interface ItemEditorProps {
-  items: InvoiceItemFormValues[];
-  onChange: (items: InvoiceItemFormValues[]) => void;
+  items: InvoiceItemFormOutput[];
+  onChange: (items: InvoiceItemFormOutput[]) => void;
   currency?: Currency;
   disabled?: boolean;
 }

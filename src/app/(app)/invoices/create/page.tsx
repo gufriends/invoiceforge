@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { InvoiceForm } from "@/components/forms/invoice-form";
 import { FormSkeleton } from "@/components/custom/loading-skeleton";
 import { useCreateInvoice, useNextInvoiceNumber } from "@/hooks/use-invoices";
-import type { InvoiceFormValues } from "@/types/forms";
+import type { InvoiceFormOutput } from "@/types/forms";
 
 export default function CreateInvoicePage() {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function CreateInvoicePage() {
   const { data: nextNum, isLoading } = useNextInvoiceNumber();
   const create = useCreateInvoice();
 
-  const handleSubmit = async (data: InvoiceFormValues) => {
+  const handleSubmit = async (data: InvoiceFormOutput) => {
     const invoice = await create.mutateAsync({
       ...data,
       issueDate: data.issueDate.toISOString(),

@@ -34,11 +34,11 @@ import {
   RECURRING_CYCLES,
   RECURRING_CYCLE_LABELS,
 } from "@/lib/constants";
-import type { InvoiceFormValues } from "@/types/forms";
+import type { InvoiceFormValues, InvoiceFormOutput } from "@/types/forms";
 
 interface Props {
   initialValues?: Partial<InvoiceFormValues>;
-  onSubmit: (data: InvoiceFormValues) => void | Promise<void>;
+  onSubmit: (data: InvoiceFormOutput) => void | Promise<void>;
   loading?: boolean;
   submitLabel?: string;
 }
@@ -71,18 +71,18 @@ export function InvoiceForm({ initialValues, onSubmit, loading, submitLabel = "S
     watch,
     setValue,
     formState: { errors },
-  } = useForm<InvoiceFormValues>({
+  } = useForm<InvoiceFormValues, unknown, InvoiceFormOutput>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: { ...DEFAULTS, ...initialValues },
   });
 
   const items = watch("items");
-  const taxRate = watch("taxRate");
-  const discountType = watch("discountType");
-  const discountValue = watch("discountValue");
-  const isRecurring = watch("isRecurring");
-  const issueDate = watch("issueDate");
-  const dueDate = watch("dueDate");
+  const taxRate = watch("taxRate") as number;
+  const discountType = watch("discountType") as "PERCENTAGE" | "FIXED";
+  const discountValue = watch("discountValue") as number;
+  const isRecurring = watch("isRecurring") as boolean;
+  const issueDate = watch("issueDate") as Date | undefined;
+  const dueDate = watch("dueDate") as Date | undefined;
   const template = watch("template");
 
   const totals = useMemo(
@@ -170,7 +170,7 @@ export function InvoiceForm({ initialValues, onSubmit, loading, submitLabel = "S
           <Controller
             name="items"
             control={control}
-            render={({ field }) => <ItemEditor items={field.value} onChange={field.onChange} />}
+            render={({ field }) => <ItemEditor items={field.value as any} onChange={field.onChange} />}
           />
           {errors.items && <p className="text-xs text-destructive">{errors.items.message}</p>}
 

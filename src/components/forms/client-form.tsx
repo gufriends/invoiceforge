@@ -18,11 +18,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { clientSchema } from "@/lib/validations";
 import { PROVINCES_ID } from "@/lib/constants";
-import type { ClientFormValues } from "@/types/forms";
+import type { ClientFormValues, ClientFormOutput } from "@/types/forms";
 
 interface Props {
   initialValues?: Partial<ClientFormValues>;
-  onSubmit: (data: ClientFormValues) => void | Promise<void>;
+  onSubmit: (data: ClientFormOutput) => void | Promise<void>;
   loading?: boolean;
   submitLabel?: string;
 }
@@ -49,7 +49,7 @@ export function ClientForm({ initialValues, onSubmit, loading, submitLabel = "Si
     setValue,
     watch,
     formState: { errors },
-  } = useForm<ClientFormValues>({
+  } = useForm<ClientFormValues, unknown, ClientFormOutput>({
     resolver: zodResolver(clientSchema),
     defaultValues: { ...DEFAULT_VALUES, ...initialValues },
   });

@@ -19,7 +19,7 @@ import { CompanyForm } from "@/components/forms/company-form";
 import { FormSkeleton } from "@/components/custom/loading-skeleton";
 import { useCompany, useUpdateCompany } from "@/hooks/use-company";
 import { CURRENCIES, INVOICE_TEMPLATES, INVOICE_TEMPLATE_LABELS } from "@/lib/constants";
-import type { CompanyFormValues } from "@/types/forms";
+import type { CompanyFormValues, CompanyFormOutput } from "@/types/forms";
 
 // ─── Profile Tab ─────────────────────────────────────────────────────────────
 
@@ -400,7 +400,7 @@ export default function SettingsPage() {
   const { data: company, isLoading } = useCompany();
   const update = useUpdateCompany();
 
-  const handleCompanySubmit = async (data: CompanyFormValues) => {
+  const handleCompanySubmit = async (data: CompanyFormOutput) => {
     await update.mutateAsync(data);
   };
 

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ClientForm } from "@/components/forms/client-form";
 import { FormSkeleton } from "@/components/custom/loading-skeleton";
 import { useClient, useUpdateClient } from "@/hooks/use-clients";
-import type { ClientFormValues } from "@/types/forms";
+import type { ClientFormOutput } from "@/types/forms";
 
 export default function EditClientPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -16,7 +16,7 @@ export default function EditClientPage({ params }: { params: Promise<{ id: strin
   const { data: client, isLoading } = useClient(id);
   const update = useUpdateClient();
 
-  const handleSubmit = async (data: ClientFormValues) => {
+  const handleSubmit = async (data: ClientFormOutput) => {
     await update.mutateAsync({ id, data });
     router.push(`/clients/${id}`);
   };

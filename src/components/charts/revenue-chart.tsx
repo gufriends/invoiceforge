@@ -33,7 +33,7 @@ export function RevenueChart({ data }: { data: RevenueDataPoint[] }) {
         <XAxis dataKey="label" stroke={axisColor} fontSize={12} />
         <YAxis stroke={axisColor} fontSize={12} tickFormatter={(v) => formatCurrency(v, "IDR", { compact: true })} />
         <Tooltip
-          formatter={(v: number) => [formatCurrency(v), "Pendapatan"]}
+          formatter={(v) => [formatCurrency(v as number), "Pendapatan"]}
           contentStyle={{
             backgroundColor: tooltipBg,
             borderRadius: 8,

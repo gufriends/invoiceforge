@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { InvoiceForm } from "@/components/forms/invoice-form";
 import { FormSkeleton } from "@/components/custom/loading-skeleton";
 import { useInvoice, useUpdateInvoice } from "@/hooks/use-invoices";
-import type { InvoiceFormValues } from "@/types/forms";
+import type { InvoiceFormOutput } from "@/types/forms";
 
 export default function EditInvoicePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -16,7 +16,7 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   const { data: invoice, isLoading } = useInvoice(id);
   const update = useUpdateInvoice();
 
-  const handleSubmit = async (data: InvoiceFormValues) => {
+  const handleSubmit = async (data: InvoiceFormOutput) => {
     await update.mutateAsync({
       id,
       data: {

@@ -16,11 +16,11 @@ import {
   INVOICE_TEMPLATES,
   INVOICE_TEMPLATE_LABELS,
 } from "@/lib/constants";
-import type { CompanyFormValues } from "@/types/forms";
+import type { CompanyFormValues, CompanyFormOutput } from "@/types/forms";
 
 interface Props {
   initialValues: Partial<CompanyFormValues>;
-  onSubmit: (data: CompanyFormValues) => void | Promise<void>;
+  onSubmit: (data: CompanyFormOutput) => void | Promise<void>;
   loading?: boolean;
 }
 
@@ -31,7 +31,7 @@ export function CompanyForm({ initialValues, onSubmit, loading }: Props) {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<CompanyFormValues>({
+  } = useForm<CompanyFormValues, unknown, CompanyFormOutput>({
     resolver: zodResolver(companySchema),
     defaultValues: {
       name: "",

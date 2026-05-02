@@ -26,7 +26,7 @@ export function RegisterForm() {
     formState: { errors },
   } = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "", confirmPassword: "", acceptTerms: false },
+    defaultValues: { name: "", email: "", password: "", confirmPassword: "", acceptTerms: false as any },
   });
 
   const acceptTerms = watch("acceptTerms");
@@ -123,7 +123,7 @@ export function RegisterForm() {
         <Checkbox
           id="acceptTerms"
           checked={acceptTerms}
-          onCheckedChange={(c) => setValue("acceptTerms", c === true, { shouldValidate: true })}
+          onCheckedChange={(c) => setValue("acceptTerms", (c === true) as any, { shouldValidate: true })}
         />
         <Label htmlFor="acceptTerms" className="text-sm font-normal leading-snug">
           Saya setuju dengan syarat & ketentuan dan kebijakan privasi InvoiceForge

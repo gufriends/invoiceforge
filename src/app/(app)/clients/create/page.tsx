@@ -6,13 +6,13 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientForm } from "@/components/forms/client-form";
 import { useCreateClient } from "@/hooks/use-clients";
-import type { ClientFormValues } from "@/types/forms";
+import type { ClientFormOutput } from "@/types/forms";
 
 export default function CreateClientPage() {
   const router = useRouter();
   const create = useCreateClient();
 
-  const handleSubmit = async (data: ClientFormValues) => {
+  const handleSubmit = async (data: ClientFormOutput) => {
     const client = await create.mutateAsync(data);
     router.push(`/clients/${client.id}`);
   };

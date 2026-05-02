@@ -1,5 +1,4 @@
 import type { Currency } from "@/lib/constants";
-import type { InvoiceItemFormValues } from "./forms";
 
 export type FormatCurrencyFn = (
   value: number,
@@ -27,10 +26,10 @@ export interface InvoiceTotals {
 }
 
 export type CalculateInvoiceTotalsFn = (input: {
-  items: Pick<InvoiceItemFormValues, "quantity" | "unitPrice">[];
-  taxRate: number;
-  discountType: "PERCENTAGE" | "FIXED";
-  discountValue: number;
+  items: { quantity: unknown; unitPrice: unknown }[];
+  taxRate: unknown;
+  discountType: string | undefined;
+  discountValue: unknown;
 }) => InvoiceTotals;
 
 export type ExportCsvFn = <T extends Record<string, unknown>>(

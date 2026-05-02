@@ -10,13 +10,13 @@ import {
 import { PaymentForm } from "@/components/forms/payment-form";
 import { useCreatePayment } from "@/hooks/use-payments";
 import type { PaymentDialogProps } from "@/types/component-props";
-import type { PaymentFormValues } from "@/types/forms";
+import type { PaymentFormOutput } from "@/types/forms";
 
 export function PaymentDialog({ open, onOpenChange, invoice, onSuccess }: PaymentDialogProps) {
   const create = useCreatePayment();
   const remaining = Math.max(0, invoice.total - invoice.paidAmount);
 
-  const handleSubmit = async (data: PaymentFormValues) => {
+  const handleSubmit = async (data: PaymentFormOutput) => {
     await create.mutateAsync({
       invoiceId: invoice.id,
       amount: data.amount,
