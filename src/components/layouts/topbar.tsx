@@ -1,94 +1,134 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Bell, Moon, Sun, Search, LogOut, User as UserIcon, Menu } from "lucide-react";
+import { Fragment, useCallback, useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Moon, Sun, Search } from "lucide-react";
+import { NotificationDropdown } from "@/components/layouts/notification-dropdown";
 import { useTheme } from "next-themes";
-import { signOut, useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useSidebarStore } from "@/store/sidebar-store";
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+
+const ROUTE_LABELS: Record<string, string> = {
+  dashboard: "Dashboard",
+  invoices: "Invoice",
+  clients: "Klien",
+  analytics: "Analitik",
+  reports: "Laporan",
+  settings: "Pengaturan",
+  create: "Buat Baru",
+  edit: "Edit",
+};
+
+function useBreadcrumbs() {
+  const pathname = usePathname();
+  const segments = pathname.split("/").filter(Boolean);
+
+  return segments.map((seg, i) => {
+    const href = "/" + segments.slice(0, i + 1).join("/");
+    const isId = /^[a-z0-9-]{20,}$/i.test(seg) || seg === "[id]";
+    const label = ROUTE_LABELS[seg] ?? (isId ? "Detail" : seg);
+    const isLast = i === segments.length - 1;
+    return { href, label, isLast };
+  });
+}
 
 export function Topbar() {
   const { theme, setTheme } = useTheme();
-  const { data: session } = useSession();
-  const { setMobileOpen } = useSidebarStore();
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const breadcrumbs = useBreadcrumbs();
+
   useEffect(() => setMounted(true), []);
 
-  const initials = (session?.user?.name ?? "U")
-    .split(" ")
-    .map((p) => p[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  const handleScroll = useCallback(() => {
+    setScrolled(window.scrollY > 10);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [handleScroll]);
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card px-4 pl-16 lg:pl-4 lg:px-6">
-      <Button variant="ghost" size="icon" className="lg:hidden -ml-2" onClick={() => setMobileOpen(true)}>
-        <Menu className="h-5 w-5" />
-      </Button>
-      <div className="relative flex-1 max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Cari invoice, klien... (Ctrl+K)"
-          className="pl-9 cursor-pointer"
-          readOnly
+    <header
+      className={`sticky top-0 z-30 flex h-14 items-center gap-2 px-4 transition-all duration-200 ${
+        scrolled
+          ? "bg-background/95 backdrop-blur-sm border-b shadow-[0_1px_0_0_var(--border)]"
+          : "bg-background"
+      }`}
+    >
+      <SidebarTrigger className="-ml-1 h-8 w-8" />
+      <Separator orientation="vertical" className="h-4" />
+
+      {/* Breadcrumb */}
+      <Breadcrumb className="hidden sm:flex">
+        <BreadcrumbList>
+          {breadcrumbs.map((crumb) => (
+            <Fragment key={crumb.href}>
+              <BreadcrumbItem>
+                {crumb.isLast ? (
+                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild>
+                    <Link href={crumb.href}>{crumb.label}</Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+              {!crumb.isLast && <BreadcrumbSeparator />}
+            </Fragment>
+          ))}
+        </BreadcrumbList>
+      </Breadcrumb>
+
+      {/* Right actions */}
+      <div className="ml-auto flex items-center gap-1">
+        {/* Cmd+K search trigger */}
+        <Button
+          variant="ghost"
+          size="sm"
+          className="hidden md:flex h-8 gap-2 px-3 text-muted-foreground text-xs font-normal border border-border/60 bg-muted/30 hover:bg-muted/60"
           onClick={() =>
             document.dispatchEvent(
               new KeyboardEvent("keydown", { key: "k", ctrlKey: true, bubbles: true })
             )
           }
-        />
-      </div>
-
-      <div className="ml-auto flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-          {mounted ? (theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />) : <Moon className="h-5 w-5" />}
+        >
+          <Search className="h-3.5 w-3.5" />
+          <span>Cari...</span>
+          <kbd className="ml-1 pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
+            <span className="text-xs">⌘</span>K
+          </kbd>
         </Button>
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+        >
+          {mounted ? (
+            theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )
+          ) : (
+            <Moon className="h-4 w-4" />
+          )}
         </Button>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-9 gap-2 px-2">
-              <Avatar className="h-7 w-7">
-                <AvatarImage src={session?.user?.image ?? undefined} />
-                <AvatarFallback className="text-xs">{initials}</AvatarFallback>
-              </Avatar>
-              <span className="hidden md:inline text-sm font-medium">{session?.user?.name}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div className="font-medium">{session?.user?.name}</div>
-              <div className="text-xs text-muted-foreground">{session?.user?.email}</div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <a href="/settings" className="cursor-pointer">
-                <UserIcon className="mr-2 h-4 w-4" /> Profil
-              </a>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => signOut({ callbackUrl: "/login" })}
-              className="cursor-pointer text-destructive"
-            >
-              <LogOut className="mr-2 h-4 w-4" /> Keluar
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <NotificationDropdown />
       </div>
     </header>
   );

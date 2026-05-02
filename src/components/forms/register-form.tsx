@@ -10,26 +10,26 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { registerSchema } from "@/lib/validations";
 import type { RegisterFormValues } from "@/types/forms";
 
 export function RegisterForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<RegisterFormValues>({
+
+  const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: { name: "", email: "", password: "", confirmPassword: "", acceptTerms: false },
   });
-
-  const acceptTerms = watch("acceptTerms");
 
   const onSubmit = async (data: RegisterFormValues) => {
     setLoading(true);
@@ -51,48 +51,88 @@ export function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="name">Nama Lengkap</Label>
-        <Input id="name" placeholder="Nama kamu" {...register("name")} />
-        {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" placeholder="nama@email.com" {...register("email")} />
-        {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" placeholder="Min. 8 karakter" {...register("password")} />
-        {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-      </div>
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Konfirmasi Password</Label>
-        <Input id="confirmPassword" type="password" placeholder="Ulangi password" {...register("confirmPassword")} />
-        {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
-      </div>
-      <div className="flex items-start gap-2">
-        <Checkbox
-          id="acceptTerms"
-          checked={acceptTerms}
-          onCheckedChange={(c) => setValue("acceptTerms", c === true, { shouldValidate: true })}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Nama Lengkap</FormLabel>
+              <FormControl>
+                <Input placeholder="Nama kamu" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        <Label htmlFor="acceptTerms" className="text-sm font-normal leading-snug">
-          Saya setuju dengan syarat & ketentuan dan kebijakan privasi InvoiceForge
-        </Label>
-      </div>
-      {errors.acceptTerms && <p className="text-xs text-destructive">{errors.acceptTerms.message}</p>}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Daftar
-      </Button>
-      <p className="text-center text-sm text-muted-foreground">
-        Sudah punya akun?{" "}
-        <Link href="/login" className="font-medium text-primary hover:underline">
-          Masuk di sini
-        </Link>
-      </p>
-    </form>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="nama@email.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="Min. 8 karakter" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Konfirmasi Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="Ulangi password" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="acceptTerms"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start gap-2 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormLabel className="font-normal leading-snug text-sm">
+                Saya setuju dengan syarat & ketentuan dan kebijakan privasi InvoiceForge
+              </FormLabel>
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="w-full" disabled={loading}>
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          Daftar
+        </Button>
+        <p className="text-center text-sm text-muted-foreground">
+          Sudah punya akun?{" "}
+          <Link href="/login" className="font-medium text-primary hover:underline">
+            Masuk di sini
+          </Link>
+        </p>
+      </form>
+    </Form>
   );
 }

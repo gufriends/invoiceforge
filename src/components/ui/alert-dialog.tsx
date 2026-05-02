@@ -89,20 +89,22 @@ function AlertDialogDescription({ className, ...props }: AlertDialogPrimitive.De
 }
 
 function AlertDialogAction({ className, ...props }: AlertDialogPrimitive.Close.Props) {
+  const cn_ = typeof className === "string" ? className : undefined
   return (
     <AlertDialogPrimitive.Close
       data-slot="alert-dialog-action"
-      render={<Button className={className} />}
+      render={<Button className={cn_} />}
       {...props}
     />
   )
 }
 
 function AlertDialogCancel({ className, ...props }: AlertDialogPrimitive.Close.Props) {
+  const cn_ = typeof className === "string" ? cn("mt-2 sm:mt-0", className) : "mt-2 sm:mt-0"
   return (
     <AlertDialogPrimitive.Close
       data-slot="alert-dialog-cancel"
-      render={<Button variant="outline" className={cn("mt-2 sm:mt-0", className)} />}
+      render={<Button variant="outline" className={cn_} />}
       {...props}
     />
   )

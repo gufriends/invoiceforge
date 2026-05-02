@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300" fill="none">
+  <!-- Page background -->
+  <rect width="240" height="300" rx="4" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+  <!-- Brand bar -->
+  <rect x="16" y="16" width="36" height="4" rx="2" fill="#10b981"/>
+  <!-- Company name -->
+  <rect x="16" y="26" width="70" height="6" rx="2" fill="#0f172a"/>
+  <!-- Address lines -->
+  <rect x="16" y="35" width="55" height="3" rx="1.5" fill="#cbd5e1"/>
+  <rect x="16" y="40" width="45" height="3" rx="1.5" fill="#cbd5e1"/>
+  <!-- INVOICE title right -->
+  <rect x="160" y="14" width="64" height="12" rx="2" fill="#10b981" opacity="0.15"/>
+  <text x="192" y="24" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="700" fill="#10b981" letter-spacing="2">INVOICE</text>
+  <!-- Invoice number -->
+  <rect x="168" y="29" width="56" height="5" rx="1.5" fill="#0f172a" opacity="0.7"/>
+  <!-- Status badge -->
+  <rect x="187" y="37" width="37" height="6" rx="3" fill="#10b981"/>
+  <!-- Parties box -->
+  <rect x="16" y="58" width="208" height="44" rx="4" fill="#f8fafc"/>
+  <rect x="24" y="65" width="30" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="24" y="71" width="60" height="5" rx="2" fill="#0f172a"/>
+  <rect x="24" y="79" width="50" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="24" y="84" width="40" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="122" y="58" width="1" height="44" fill="#e2e8f0"/>
+  <rect x="130" y="65" width="30" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="130" y="71" width="60" height="5" rx="2" fill="#0f172a"/>
+  <rect x="130" y="79" width="50" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="130" y="84" width="40" height="3" rx="1.5" fill="#94a3b8"/>
+  <!-- Table header -->
+  <rect x="16" y="112" width="208" height="14" rx="3" fill="#10b981"/>
+  <!-- Table rows -->
+  <rect x="16" y="126" width="208" height="13" rx="0" fill="#ffffff"/>
+  <rect x="16" y="126" width="208" height="1" fill="#e2e8f0"/>
+  <rect x="16" y="139" width="208" height="13" rx="0" fill="#f8fafc"/>
+  <rect x="16" y="139" width="208" height="1" fill="#e2e8f0"/>
+  <rect x="16" y="152" width="208" height="13" rx="0" fill="#ffffff"/>
+  <rect x="16" y="152" width="208" height="1" fill="#e2e8f0"/>
+  <rect x="16" y="165" width="208" height="1" fill="#e2e8f0"/>
+  <!-- Totals box -->
+  <rect x="136" y="175" width="88" height="52" rx="4" fill="#f8fafc"/>
+  <rect x="144" y="182" width="36" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="192" y="182" width="24" height="3" rx="1.5" fill="#0f172a"/>
+  <rect x="144" y="188" width="28" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="192" y="188" width="24" height="3" rx="1.5" fill="#0f172a"/>
+  <rect x="144" y="195" width="72" height="1" fill="#e2e8f0"/>
+  <rect x="144" y="200" width="30" height="5" rx="1.5" fill="#10b981"/>
+  <rect x="186" y="200" width="30" height="5" rx="1.5" fill="#10b981"/>
+  <!-- Info section -->
+  <rect x="16" y="237" width="60" height="3" rx="1.5" fill="#94a3b8"/>
+  <rect x="16" y="242" width="55" height="3" rx="1.5" fill="#cbd5e1"/>
+  <rect x="16" y="247" width="48" height="3" rx="1.5" fill="#cbd5e1"/>
+  <!-- Footer line -->
+  <rect x="16" y="280" width="208" height="1" fill="#e2e8f0"/>
+  <rect x="16" y="284" width="80" height="3" rx="1.5" fill="#cbd5e1"/>
+  <rect x="200" y="284" width="24" height="3" rx="1.5" fill="#cbd5e1"/>
+</svg>

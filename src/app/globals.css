@@ -1,122 +1,219 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-@theme {
-  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+@custom-variant dark (&:is(.dark *));
 
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-900: #1e3a8a;
+@theme inline {
+  /* Fonts — resolved from next/font CSS variables set on <html> */
+  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-  --color-warning-500: #f97316;
-  --color-warning-600: #ea580c;
-  --color-danger-500: #ef4444;
-  --color-danger-600: #dc2626;
-  --color-info-500: #06b6d4;
-  --color-info-600: #0891b2;
+  /* Radius scale (compact) */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  /* Color tokens — all resolved from CSS vars in :root / .dark */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Invoice status */
+  --color-status-draft: var(--status-draft);
+  --color-status-sent: var(--status-sent);
+  --color-status-viewed: var(--status-viewed);
+  --color-status-partial: var(--status-partial);
+  --color-status-paid: var(--status-paid);
+  --color-status-overdue: var(--status-overdue);
+  --color-status-cancelled: var(--status-cancelled);
 }
 
+/* ─── Light mode ─────────────────────────────────────────── */
 :root {
-  --background: 248 250 252; /* slate-50 */
-  --foreground: 15 23 42; /* slate-900 */
-  --card: 255 255 255;
-  --card-foreground: 15 23 42;
-  --popover: 255 255 255;
-  --popover-foreground: 15 23 42;
-  --border: 226 232 240; /* slate-200 */
-  --input: 203 213 225; /* slate-300 — slightly darker for visibility */
-  --ring: 37 99 235; /* primary-600 */
-  --primary: 37 99 235;
-  --primary-foreground: 255 255 255;
-  --secondary: 124 58 237;
-  --secondary-foreground: 255 255 255;
-  --muted: 241 245 249;
-  --muted-foreground: 100 116 139;
-  --accent: 241 245 249;
-  --accent-foreground: 15 23 42;
-  --destructive: 220 38 38;
-  --destructive-foreground: 255 255 255;
-  --success: 22 163 74;
-  --success-foreground: 255 255 255;
-  --warning: 234 88 12;
-  --warning-foreground: 255 255 255;
-  --info: 8 145 178;
-  --info-foreground: 255 255 255;
-  --radius: 0.5rem;
+  --radius: 0.625rem;
 
-  /* Chart colors */
-  --chart-1: 37 99 235;
-  --chart-2: 22 163 74;
-  --chart-3: 234 88 12;
-  --chart-4: 124 58 237;
-  --chart-5: 8 145 178;
+  /* Surfaces */
+  --background:          oklch(0.990 0.005 165);
+  --foreground:          oklch(0.150 0.015 165);
+  --card:                oklch(1.000 0.000 0);
+  --card-foreground:     oklch(0.150 0.015 165);
+  --popover:             oklch(1.000 0.000 0);
+  --popover-foreground:  oklch(0.150 0.015 165);
 
-  /* Invoice status colors */
-  --status-draft: 100 116 139;
-  --status-sent: 37 99 235;
-  --status-viewed: 14 165 233;
-  --status-partial: 234 88 12;
-  --status-paid: 22 163 74;
-  --status-overdue: 220 38 38;
-  --status-cancelled: 148 163 184;
+  /* Brand — emerald */
+  --primary:             oklch(0.550 0.150 165);
+  --primary-foreground:  oklch(0.990 0.005 165);
+
+  /* Neutrals */
+  --secondary:           oklch(0.960 0.012 165);
+  --secondary-foreground: oklch(0.200 0.020 165);
+  --muted:               oklch(0.960 0.008 165);
+  --muted-foreground:    oklch(0.500 0.015 165);
+  --accent:              oklch(0.650 0.180 200);
+  --accent-foreground:   oklch(0.990 0.005 165);
+
+  /* Semantic */
+  --destructive:         oklch(0.580 0.220 25);
+  --destructive-foreground: oklch(0.990 0.000 0);
+  --success:             oklch(0.600 0.170 155);
+  --success-foreground:  oklch(0.990 0.000 0);
+  --warning:             oklch(0.700 0.160 75);
+  --warning-foreground:  oklch(0.150 0.000 0);
+  --info:                oklch(0.600 0.180 230);
+  --info-foreground:     oklch(0.990 0.000 0);
+
+  /* Chrome */
+  --border:              oklch(0.920 0.008 165);
+  --input:               oklch(0.920 0.008 165);
+  --ring:                oklch(0.550 0.150 165);
+
+  /* Sidebar */
+  --sidebar-background:           oklch(0.975 0.006 165);
+  --sidebar-foreground:           oklch(0.300 0.015 165);
+  --sidebar-primary:              oklch(0.550 0.150 165);
+  --sidebar-primary-foreground:   oklch(0.990 0.005 165);
+  --sidebar-accent:               oklch(0.920 0.018 165);
+  --sidebar-accent-foreground:    oklch(0.200 0.015 165);
+  --sidebar-border:               oklch(0.905 0.008 165);
+  --sidebar-ring:                 oklch(0.550 0.150 165);
+
+  /* Charts — emerald/teal spectrum */
+  --chart-1: oklch(0.550 0.150 165);
+  --chart-2: oklch(0.650 0.180 200);
+  --chart-3: oklch(0.700 0.160 75);
+  --chart-4: oklch(0.600 0.200 25);
+  --chart-5: oklch(0.500 0.180 280);
+
+  /* Invoice status — 7 visually distinct colors */
+  --status-draft:     oklch(0.550 0.012 250);
+  --status-sent:      oklch(0.550 0.180 230);
+  --status-viewed:    oklch(0.560 0.160 280);
+  --status-partial:   oklch(0.680 0.160 75);
+  --status-paid:      oklch(0.600 0.160 155);
+  --status-overdue:   oklch(0.580 0.220 25);
+  --status-cancelled: oklch(0.500 0.012 260);
 }
 
+/* ─── Dark mode ──────────────────────────────────────────── */
 .dark {
-  --background: 15 23 42; /* slate-900 */
-  --foreground: 241 245 249;
-  --card: 30 41 59; /* slate-800 */
-  --card-foreground: 241 245 249;
-  --popover: 30 41 59;
-  --popover-foreground: 241 245 249;
-  --border: 51 65 85;
-  --input: 71 85 105; /* slate-600 — slightly lighter for better visibility */
-  --ring: 59 130 246;
-  --primary: 59 130 246;
-  --primary-foreground: 15 23 42;
-  --secondary: 139 92 246;
-  --secondary-foreground: 15 23 42;
-  --muted: 30 41 59;
-  --muted-foreground: 148 163 184;
-  --accent: 30 41 59;
-  --accent-foreground: 241 245 249;
-  --destructive: 239 68 68;
-  --destructive-foreground: 15 23 42;
-  --success: 34 197 94;
-  --success-foreground: 15 23 42;
-  --warning: 249 115 22;
-  --warning-foreground: 15 23 42;
-  --info: 6 182 212;
-  --info-foreground: 15 23 42;
+  /* Surfaces */
+  --background:          oklch(0.160 0.012 165);
+  --foreground:          oklch(0.970 0.008 165);
+  --card:                oklch(0.200 0.015 165);
+  --card-foreground:     oklch(0.970 0.008 165);
+  --popover:             oklch(0.200 0.015 165);
+  --popover-foreground:  oklch(0.970 0.008 165);
 
-  /* Chart colors dark */
-  --chart-1: 59 130 246;
-  --chart-2: 34 197 94;
-  --chart-3: 249 115 22;
-  --chart-4: 139 92 246;
-  --chart-5: 6 182 212;
+  /* Brand — lighter emerald for dark bg */
+  --primary:             oklch(0.700 0.150 165);
+  --primary-foreground:  oklch(0.160 0.012 165);
 
-  /* Invoice status colors dark */
-  --status-draft: 148 163 184;
-  --status-sent: 59 130 246;
-  --status-viewed: 56 189 248;
-  --status-partial: 249 115 22;
-  --status-paid: 34 197 94;
-  --status-overdue: 239 68 68;
-  --status-cancelled: 100 116 139;
+  /* Neutrals */
+  --secondary:           oklch(0.240 0.012 165);
+  --secondary-foreground: oklch(0.970 0.008 165);
+  --muted:               oklch(0.230 0.010 165);
+  --muted-foreground:    oklch(0.600 0.012 165);
+  --accent:              oklch(0.650 0.180 200);
+  --accent-foreground:   oklch(0.160 0.012 165);
+
+  /* Semantic */
+  --destructive:         oklch(0.650 0.220 25);
+  --destructive-foreground: oklch(0.970 0.008 165);
+  --success:             oklch(0.680 0.170 155);
+  --success-foreground:  oklch(0.160 0.012 165);
+  --warning:             oklch(0.760 0.150 75);
+  --warning-foreground:  oklch(0.160 0.012 165);
+  --info:                oklch(0.700 0.180 230);
+  --info-foreground:     oklch(0.160 0.012 165);
+
+  /* Chrome */
+  --border:              oklch(0.280 0.012 165);
+  --input:               oklch(0.280 0.012 165);
+  --ring:                oklch(0.700 0.150 165);
+
+  /* Sidebar — slightly darker than card */
+  --sidebar-background:           oklch(0.175 0.012 165);
+  --sidebar-foreground:           oklch(0.970 0.008 165);
+  --sidebar-primary:              oklch(0.700 0.150 165);
+  --sidebar-primary-foreground:   oklch(0.160 0.012 165);
+  --sidebar-accent:               oklch(0.250 0.015 165);
+  --sidebar-accent-foreground:    oklch(0.970 0.008 165);
+  --sidebar-border:               oklch(0.280 0.012 165);
+  --sidebar-ring:                 oklch(0.700 0.150 165);
+
+  /* Charts — slightly brighter for dark bg */
+  --chart-1: oklch(0.700 0.150 165);
+  --chart-2: oklch(0.700 0.180 200);
+  --chart-3: oklch(0.760 0.150 75);
+  --chart-4: oklch(0.660 0.200 25);
+  --chart-5: oklch(0.620 0.180 280);
+
+  /* Invoice status */
+  --status-draft:     oklch(0.650 0.010 250);
+  --status-sent:      oklch(0.650 0.180 230);
+  --status-viewed:    oklch(0.660 0.160 280);
+  --status-partial:   oklch(0.760 0.150 75);
+  --status-paid:      oklch(0.680 0.160 155);
+  --status-overdue:   oklch(0.650 0.220 25);
+  --status-cancelled: oklch(0.560 0.010 260);
 }
 
-* {
-  border-color: rgb(var(--border));
+/* ─── Base global styles ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+  border-color: var(--border);
   box-sizing: border-box;
 }
 
@@ -126,8 +223,8 @@ html {
 }
 
 body {
-  background-color: rgb(var(--background));
-  color: rgb(var(--foreground));
+  background-color: var(--background);
+  color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -136,50 +233,45 @@ body {
 }
 
 ::selection {
-  background-color: rgb(var(--primary) / 0.15);
-  color: rgb(var(--foreground));
+  background-color: color-mix(in oklch, var(--primary) 15%, transparent);
+  color: var(--foreground);
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
+/* Thin custom scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(var(--border));
+  background-color: var(--border);
   border-radius: 999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgb(var(--muted-foreground) / 0.5);
+  background-color: color-mix(in oklch, var(--muted-foreground) 50%, transparent);
 }
 
+/* Headings — tighter for compact density */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.3;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+a { color: inherit; text-decoration: none; }
 
-input[type="search"]::-webkit-search-cancel-button {
-  display: none;
-}
+input[type="search"]::-webkit-search-cancel-button { display: none; }
 
+/* Shimmer skeleton animation */
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--foreground) 6%, transparent),
+    transparent
+  );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }

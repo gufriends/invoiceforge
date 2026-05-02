@@ -1,26 +1,28 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { id as localeID } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 import { ItemEditor } from "@/components/custom/item-editor";
 import { ClientSelect } from "@/components/custom/client-select";
 import { CurrencyInput } from "@/components/custom/currency-input";
@@ -29,8 +31,6 @@ import { calculateInvoiceTotals } from "@/utils/calculate-totals";
 import { formatCurrency } from "@/utils/format-currency";
 import { cn } from "@/lib/utils";
 import {
-  INVOICE_TEMPLATES,
-  INVOICE_TEMPLATE_LABELS,
   RECURRING_CYCLES,
   RECURRING_CYCLE_LABELS,
 } from "@/lib/constants";
@@ -44,7 +44,7 @@ interface Props {
 }
 
 const today = new Date();
-const inThirtyDays = new Date();
+const inThirtyDays = new Date(today);
 inThirtyDays.setDate(inThirtyDays.getDate() + 30);
 
 const DEFAULTS: InvoiceFormValues = {
@@ -64,26 +64,16 @@ const DEFAULTS: InvoiceFormValues = {
 };
 
 export function InvoiceForm({ initialValues, onSubmit, loading, submitLabel = "Simpan" }: Props) {
-  const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<InvoiceFormValues>({
+  const form = useForm<InvoiceFormValues>({
     resolver: zodResolver(invoiceSchema),
     defaultValues: { ...DEFAULTS, ...initialValues },
   });
 
-  const items = watch("items");
-  const taxRate = watch("taxRate");
-  const discountType = watch("discountType");
-  const discountValue = watch("discountValue");
-  const isRecurring = watch("isRecurring");
-  const issueDate = watch("issueDate");
-  const dueDate = watch("dueDate");
-  const template = watch("template");
+  const items = form.watch("items");
+  const taxRate = form.watch("taxRate");
+  const discountType = form.watch("discountType");
+  const discountValue = form.watch("discountValue");
+  const isRecurring = form.watch("isRecurring");
 
   const totals = useMemo(
     () => calculateInvoiceTotals({ items, taxRate, discountType, discountValue }),
@@ -91,175 +81,244 @@ export function InvoiceForm({ initialValues, onSubmit, loading, submitLabel = "S
   );
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Section 1: Info Invoice */}
-      <Card>
-        <CardHeader><CardTitle>Informasi Invoice</CardTitle></CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="invoiceNumber">Nomor Invoice <span className="text-destructive">*</span></Label>
-            <Input id="invoiceNumber" placeholder="INV-2026-0001" {...register("invoiceNumber")} className="font-mono" />
-            {errors.invoiceNumber && <p className="text-xs text-destructive">{errors.invoiceNumber.message}</p>}
-          </div>
-          <div className="space-y-2">
-            <Label>Template</Label>
-            <Select value={template} onValueChange={(v) => setValue("template", v as any)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {INVOICE_TEMPLATES.map((t) => (
-                  <SelectItem key={t} value={t}>{INVOICE_TEMPLATE_LABELS[t]}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label>Tanggal Terbit <span className="text-destructive">*</span></Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !issueDate && "text-muted-foreground")}>
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {issueDate ? format(issueDate, "dd MMMM yyyy", { locale: localeID }) : "Pilih tanggal"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={issueDate} onSelect={(d) => d && setValue("issueDate", d)} />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="space-y-2">
-            <Label>Tanggal Jatuh Tempo <span className="text-destructive">*</span></Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !dueDate && "text-muted-foreground")}>
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dueDate ? format(dueDate, "dd MMMM yyyy", { locale: localeID }) : "Pilih tanggal"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar mode="single" selected={dueDate} onSelect={(d) => d && setValue("dueDate", d)} />
-              </PopoverContent>
-            </Popover>
-            {errors.dueDate && <p className="text-xs text-destructive">{errors.dueDate.message}</p>}
-          </div>
-        </CardContent>
-      </Card>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        {/* Informasi Invoice */}
+        <Card>
+          <CardHeader><CardTitle>Informasi Invoice</CardTitle></CardHeader>
+          <CardContent className="grid gap-4 sm:grid-cols-2">
+            <FormField control={form.control} name="invoiceNumber" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nomor Invoice <span className="text-destructive">*</span></FormLabel>
+                <FormControl>
+                  <Input placeholder="INV-2026-0001" className="font-mono" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="issueDate" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tanggal Terbit <span className="text-destructive">*</span></FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn("w-full justify-start font-normal", !field.value && "text-muted-foreground")}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value
+                          ? format(field.value, "dd MMMM yyyy", { locale: localeID })
+                          : "Pilih tanggal"}
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar mode="single" selected={field.value} onSelect={(d) => d && field.onChange(d)} />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="dueDate" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tanggal Jatuh Tempo <span className="text-destructive">*</span></FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn("w-full justify-start font-normal", !field.value && "text-muted-foreground")}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {field.value
+                          ? format(field.value, "dd MMMM yyyy", { locale: localeID })
+                          : "Pilih tanggal"}
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar mode="single" selected={field.value} onSelect={(d) => d && field.onChange(d)} />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </CardContent>
+        </Card>
 
-      {/* Section 2: Klien */}
-      <Card>
-        <CardHeader><CardTitle>Klien <span className="text-destructive">*</span></CardTitle></CardHeader>
-        <CardContent>
-          <Controller
-            name="clientId"
-            control={control}
-            render={({ field }) => (
-              <ClientSelect
-                value={field.value}
-                onChange={(id) => field.onChange(id ?? "")}
-                onCreateNew={() => window.open("/clients/create", "_blank")}
-              />
-            )}
-          />
-          {errors.clientId && <p className="mt-2 text-xs text-destructive">{errors.clientId.message}</p>}
-        </CardContent>
-      </Card>
+        {/* Klien */}
+        <Card>
+          <CardHeader><CardTitle>Klien <span className="text-destructive">*</span></CardTitle></CardHeader>
+          <CardContent>
+            <FormField control={form.control} name="clientId" render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <ClientSelect
+                    value={field.value}
+                    onChange={(id) => field.onChange(id ?? "")}
+                    onCreateNew={() => window.open("/clients/create", "_blank")}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+          </CardContent>
+        </Card>
 
-      {/* Section 3: Items */}
-      <Card>
-        <CardHeader><CardTitle>Item</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <Controller
-            name="items"
-            control={control}
-            render={({ field }) => <ItemEditor items={field.value} onChange={field.onChange} />}
-          />
-          {errors.items && <p className="text-xs text-destructive">{errors.items.message}</p>}
+        {/* Item */}
+        <Card>
+          <CardHeader><CardTitle>Item</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <FormField control={form.control} name="items" render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <ItemEditor items={field.value} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="taxRate">PPN (%)</Label>
-              <Input id="taxRate" type="number" min="0" max="100" step="0.1" {...register("taxRate", { valueAsNumber: true })} className="font-mono" />
+            <Separator />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField control={form.control} name="taxRate" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>PPN (%)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      className="font-mono"
+                      {...field}
+                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )} />
+              <FormField control={form.control} name="discountValue" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Diskon</FormLabel>
+                  <div className="flex gap-2">
+                    <Select
+                      value={discountType}
+                      onValueChange={(v) => form.setValue("discountType", v as "PERCENTAGE" | "FIXED")}
+                    >
+                      <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PERCENTAGE">Persen %</SelectItem>
+                        <SelectItem value="FIXED">Jumlah Rp</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormControl>
+                      {discountType === "FIXED" ? (
+                        <CurrencyInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          className="flex-1"
+                        />
+                      ) : (
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          step="0.1"
+                          className="flex-1 font-mono"
+                          value={field.value}
+                          onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        />
+                      )}
+                    </FormControl>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )} />
             </div>
-            <div className="space-y-2">
-              <Label>Diskon</Label>
-              <div className="flex gap-2">
-                <Select value={discountType} onValueChange={(v) => setValue("discountType", v as any)}>
-                  <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PERCENTAGE">Persen %</SelectItem>
-                    <SelectItem value="FIXED">Jumlah Rp</SelectItem>
-                  </SelectContent>
-                </Select>
-                {discountType === "FIXED" ? (
-                  <CurrencyInput value={discountValue} onChange={(v) => setValue("discountValue", v)} className="flex-1" />
-                ) : (
-                  <Input type="number" min="0" max="100" step="0.1" value={discountValue} onChange={(e) => setValue("discountValue", Number(e.target.value))} className="flex-1 font-mono" />
-                )}
+
+            {/* Totals summary */}
+            <div className="rounded-md border bg-muted/30 p-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="font-mono">{formatCurrency(totals.subtotal)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Diskon</span>
+                <span className="font-mono text-destructive">- {formatCurrency(totals.discountAmount)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">PPN ({taxRate}%)</span>
+                <span className="font-mono">{formatCurrency(totals.taxAmount)}</span>
+              </div>
+              <Separator />
+              <div className="flex justify-between font-semibold text-base">
+                <span>Total</span>
+                <span className="font-mono text-primary">{formatCurrency(totals.total)}</span>
               </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="rounded-md border bg-muted/30 p-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Subtotal</span>
-              <span className="font-mono">{formatCurrency(totals.subtotal)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Diskon</span>
-              <span className="font-mono">- {formatCurrency(totals.discountAmount)}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>PPN ({taxRate}%)</span>
-              <span className="font-mono">{formatCurrency(totals.taxAmount)}</span>
-            </div>
-            <div className="flex justify-between border-t pt-2 text-base font-bold">
-              <span>TOTAL</span>
-              <span className="font-mono text-primary">{formatCurrency(totals.total)}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+        {/* Catatan & Syarat */}
+        <Card>
+          <CardHeader><CardTitle>Catatan & Syarat</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <FormField control={form.control} name="notes" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Catatan</FormLabel>
+                <FormControl>
+                  <Textarea rows={3} placeholder="Pesan untuk klien" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="terms" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Syarat & Ketentuan</FormLabel>
+                <FormControl>
+                  <Textarea rows={3} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )} />
+            <FormField control={form.control} name="isRecurring" render={({ field }) => (
+              <FormItem className="flex items-center gap-3 space-y-0">
+                <FormControl>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <FormLabel className="font-normal">Invoice berulang (recurring)</FormLabel>
+              </FormItem>
+            )} />
+            {isRecurring && (
+              <FormField control={form.control} name="recurringCycle" render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Siklus Pengulangan</FormLabel>
+                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                    <FormControl>
+                      <SelectTrigger><SelectValue placeholder="Pilih siklus" /></SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {RECURRING_CYCLES.map((c) => (
+                        <SelectItem key={c} value={c}>{RECURRING_CYCLE_LABELS[c]}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )} />
+            )}
+          </CardContent>
+        </Card>
 
-      {/* Section 4: Tambahan */}
-      <Card>
-        <CardHeader><CardTitle>Catatan & Syarat</CardTitle></CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="notes">Catatan</Label>
-            <Textarea id="notes" rows={3} placeholder="Pesan untuk klien" {...register("notes")} />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="terms">Syarat & Ketentuan</Label>
-            <Textarea id="terms" rows={3} {...register("terms")} />
-          </div>
-          <div className="flex items-center gap-3">
-            <Switch checked={isRecurring} onCheckedChange={(c) => setValue("isRecurring", c)} id="isRecurring" />
-            <Label htmlFor="isRecurring" className="font-normal">Invoice berulang (recurring)</Label>
-          </div>
-          {isRecurring && (
-            <div className="space-y-2">
-              <Label>Siklus Pengulangan</Label>
-              <Select
-                value={watch("recurringCycle") ?? ""}
-                onValueChange={(v) => setValue("recurringCycle", v as any)}
-              >
-                <SelectTrigger><SelectValue placeholder="Pilih siklus" /></SelectTrigger>
-                <SelectContent>
-                  {RECURRING_CYCLES.map((c) => (
-                    <SelectItem key={c} value={c}>{RECURRING_CYCLE_LABELS[c]}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      <div className="flex justify-end gap-3">
-        <Button type="submit" disabled={loading} size="lg">
-          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {submitLabel}
-        </Button>
-      </div>
-    </form>
+        <div className="flex justify-end gap-3">
+          <Button type="submit" disabled={loading} size="lg">
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {submitLabel}
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

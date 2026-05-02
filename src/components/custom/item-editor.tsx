@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,47 @@ import { CurrencyInput } from "@/components/custom/currency-input";
 import { formatCurrency } from "@/utils/format-currency";
 import type { ItemEditorProps } from "@/types/component-props";
 import type { InvoiceItemFormValues } from "@/types/forms";
+
+function QtyInput({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  disabled?: boolean;
+}) {
+  const [display, setDisplay] = useState(String(value));
+
+  useEffect(() => {
+    setDisplay(String(value));
+  }, [value]);
+
+  return (
+    <Input
+      type="text"
+      inputMode="numeric"
+      value={display}
+      onChange={(e) => {
+        const digits = e.target.value.replace(/\D/g, "");
+        setDisplay(digits);
+        const n = parseInt(digits, 10);
+        if (!isNaN(n) && n >= 1) onChange(n);
+      }}
+      onBlur={() => {
+        const n = parseInt(display, 10);
+        if (isNaN(n) || n < 1) {
+          setDisplay("1");
+          onChange(1);
+        } else {
+          setDisplay(String(n));
+        }
+      }}
+      className="text-right font-mono"
+      disabled={disabled}
+    />
+  );
+}
 
 export function ItemEditor({ items, onChange, currency = "IDR", disabled }: ItemEditorProps) {
   const update = (idx: number, patch: Partial<InvoiceItemFormValues>) => {
@@ -65,13 +107,9 @@ export function ItemEditor({ items, onChange, currency = "IDR", disabled }: Item
                     />
                   </td>
                   <td className="p-2">
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) => update(idx, { quantity: Number(e.target.value) })}
-                      min="0"
-                      step="0.01"
-                      className="text-right font-mono"
+                    <QtyInput
+                      value={Number(item.quantity) || 1}
+                      onChange={(v) => update(idx, { quantity: v })}
                       disabled={disabled}
                     />
                   </td>

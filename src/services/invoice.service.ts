@@ -41,12 +41,17 @@ export const invoiceService = {
         : {}),
     };
 
+    const orderBy =
+      sortBy === "clientName"
+        ? { client: { name: sortOrder } }
+        : { [sortBy]: sortOrder };
+
     const [invoices, total] = await Promise.all([
       prisma.invoice.findMany({
         where,
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { [sortBy]: sortOrder },
+        orderBy,
         include: {
           client: { select: { id: true, name: true, company: true, email: true } },
           _count: { select: { items: true } },

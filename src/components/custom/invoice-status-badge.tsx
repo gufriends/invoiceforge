@@ -11,7 +11,7 @@ const sizes = {
 
 export function InvoiceStatusBadge({ status, size = "md" }: InvoiceStatusBadgeProps) {
   return (
-    <Badge variant="outline" className={cn("font-medium border-0", INVOICE_STATUS_COLORS[status], sizes[size])}>
+    <Badge variant="outline" className={cn("font-semibold", INVOICE_STATUS_COLORS[status], sizes[size])}>
       {INVOICE_STATUS_LABELS[status]}
     </Badge>
   );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { APP_NAME, APP_DESCRIPTION } from "@/lib/constants";
@@ -21,11 +22,14 @@ export const metadata: Metadata = {
   description: APP_DESCRIPTION,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const cookieStore = await cookies();
+  const theme = cookieStore.get("theme")?.value ?? "light";
+
   return (
-    <html lang="id" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="id" suppressHydrationWarning className={`${inter.variable} ${jetbrains.variable} ${theme === "dark" ? "dark" : ""}`}>
       <body className="min-h-screen font-sans antialiased">
-        <Providers>{children}</Providers>
+        <Providers defaultTheme={theme}>{children}</Providers>
       </body>
     </html>
   );

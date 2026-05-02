@@ -1,15 +1,17 @@
 import { prisma } from "@/lib/prisma";
 import { ApiError } from "@/lib/api-utils";
+import { notificationService } from "@/services/notification.service";
 import type { CreatePaymentRequest, UpdatePaymentRequest } from "@/types/api-requests";
 
 async function recalcInvoiceStatus(invoiceId: string) {
   const invoice = await prisma.invoice.findUnique({
     where: { id: invoiceId },
-    include: { payments: true },
+    include: { payments: true, client: true },
   });
   if (!invoice) return;
 
   const totalPaid = invoice.payments.reduce((sum, p) => sum + p.amount, 0);
+  const prevStatus = invoice.status;
   let status = invoice.status;
   if (totalPaid <= 0) {
     status = invoice.sentAt ? "SENT" : "DRAFT";
@@ -24,6 +26,28 @@ async function recalcInvoiceStatus(invoiceId: string) {
     where: { id: invoiceId },
     data: { paidAmount: totalPaid, status },
   });
+
+  if (status !== prevStatus) {
+    const amountFmt = `Rp ${invoice.total.toLocaleString("id-ID")}`;
+    if (status === "PAID") {
+      await notificationService.create(invoice.userId, {
+        type: "INVOICE_PAID",
+        title: "Invoice Lunas",
+        message: `${invoice.invoiceNumber} dari ${invoice.client.name} telah lunas (${amountFmt})`,
+        link: `/invoices/${invoice.id}`,
+        metadata: { invoiceId: invoice.id },
+      });
+    } else if (status === "PARTIAL") {
+      const paidFmt = `Rp ${totalPaid.toLocaleString("id-ID")}`;
+      await notificationService.create(invoice.userId, {
+        type: "PAYMENT_RECEIVED",
+        title: "Pembayaran Diterima",
+        message: `${invoice.invoiceNumber} — ${paidFmt} dari ${amountFmt} sudah dibayar`,
+        link: `/invoices/${invoice.id}`,
+        metadata: { invoiceId: invoice.id },
+      });
+    }
+  }
 }
 
 export const paymentService = {

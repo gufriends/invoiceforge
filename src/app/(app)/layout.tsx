@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { auth } from "@/auth";
-import { Sidebar } from "@/components/layouts/sidebar";
-import { MobileSidebar } from "@/components/layouts/mobile-sidebar";
+import { AppSidebar } from "@/components/layouts/app-sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Topbar } from "@/components/layouts/topbar";
 import { KeyboardShortcuts } from "@/components/layouts/keyboard-shortcuts";
 import { GlobalSearch } from "@/components/layouts/global-search";
@@ -11,18 +12,20 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const session = await auth();
   if (!session?.user) redirect("/login");
 
+  const cookieStore = await cookies();
+  const sidebarOpen = cookieStore.get("sidebar_state")?.value !== "false";
+
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <MobileSidebar />
-      <div className="flex flex-1 flex-col min-w-0">
+    <SidebarProvider defaultOpen={sidebarOpen}>
+      <AppSidebar />
+      <SidebarInset>
         <Topbar />
         <main className="flex-1 p-4 lg:p-6 overflow-x-hidden">
           <PageTransition>{children}</PageTransition>
         </main>
-      </div>
+      </SidebarInset>
       <KeyboardShortcuts />
       <GlobalSearch />
-    </div>
+    </SidebarProvider>
   );
 }

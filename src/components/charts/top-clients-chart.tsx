@@ -1,35 +1,56 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useTheme } from "next-themes";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import { formatCurrency } from "@/utils/format-currency";
 import type { TopClient } from "@/types/analytics";
 
-export function TopClientsChart({ data }: { data: TopClient[] }) {
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-  const gridColor = isDark ? "#334155" : "#e2e8f0";
-  const axisColor = isDark ? "#94a3b8" : "#64748b";
-  const tooltipBg = isDark ? "#1e293b" : "#ffffff";
-  const tooltipBorder = isDark ? "#334155" : "#e2e8f0";
+const chartConfig: ChartConfig = {
+  totalRevenue: { label: "Pendapatan", color: "var(--chart-4)" },
+};
 
+export function TopClientsChart({ data }: { data: TopClient[] }) {
   return (
-    <ResponsiveContainer width="100%" height={260}>
-      <BarChart data={data} layout="vertical" margin={{ left: 10 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-        <XAxis type="number" tickFormatter={(v) => formatCurrency(v, "IDR", { compact: true })} fontSize={11} stroke={axisColor} />
-        <YAxis type="category" dataKey="clientName" width={120} fontSize={11} stroke={axisColor} />
-        <Tooltip
-          formatter={(v: number) => formatCurrency(v)}
-          contentStyle={{
-            backgroundColor: tooltipBg,
-            borderRadius: 8,
-            border: `1px solid ${tooltipBorder}`,
-            fontSize: 12,
-          }}
+    <ChartContainer config={chartConfig} className="h-[260px] w-full">
+      <BarChart
+        data={data}
+        layout="vertical"
+        margin={{ left: 4, right: 4, top: 4, bottom: 4 }}
+      >
+        <CartesianGrid horizontal={false} strokeDasharray="3 3" />
+        <XAxis
+          type="number"
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11 }}
+          tickFormatter={(v) => formatCurrency(v, "IDR", { compact: true })}
         />
-        <Bar dataKey="totalRevenue" fill="#7c3aed" radius={[0, 6, 6, 0]} />
+        <YAxis
+          type="category"
+          dataKey="clientName"
+          width={110}
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11 }}
+        />
+        <ChartTooltip
+          content={
+            <ChartTooltipContent
+              formatter={(v) => [formatCurrency(Number(v ?? 0), "IDR"), "Pendapatan"]}
+            />
+          }
+        />
+        <Bar
+          dataKey="totalRevenue"
+          fill="var(--color-totalRevenue)"
+          radius={[0, 6, 6, 0]}
+        />
       </BarChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 }

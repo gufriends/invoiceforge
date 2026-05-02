@@ -30,37 +30,40 @@ interface Props {
 }
 
 export function ClientsTable({ data, loading, onDelete }: Props) {
-  if (loading) return <TableSkeleton rows={6} />;
+  if (loading) return <TableSkeleton rows={8} />;
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-card">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Nama</TableHead>
-            <TableHead>Perusahaan</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead className="text-right">Total Invoice</TableHead>
-            <TableHead className="text-right">Total Pendapatan</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-12"></TableHead>
+          <TableRow className="h-9">
+            <TableHead className="text-xs font-medium">Nama</TableHead>
+            <TableHead className="text-xs font-medium hidden sm:table-cell">Perusahaan</TableHead>
+            <TableHead className="text-xs font-medium hidden md:table-cell">Email</TableHead>
+            <TableHead className="text-xs font-medium text-right hidden lg:table-cell">Invoice</TableHead>
+            <TableHead className="text-xs font-medium text-right">Pendapatan</TableHead>
+            <TableHead className="text-xs font-medium">Status</TableHead>
+            <TableHead className="w-10"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((c) => (
-            <TableRow key={c.id} className="hover:bg-muted/50">
+            <TableRow key={c.id} className="h-10 hover:bg-muted/40">
               <TableCell>
-                <Link href={`/clients/${c.id}`} className="font-medium hover:underline">
-                  {c.name}
-                </Link>
+                <div>
+                  <Link href={`/clients/${c.id}`} className="text-sm font-medium hover:underline">
+                    {c.name}
+                  </Link>
+                  <div className="text-xs text-muted-foreground sm:hidden">{c.company || c.email}</div>
+                </div>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">{c.company || "-"}</TableCell>
-              <TableCell className="text-sm">{c.email}</TableCell>
-              <TableCell className="text-right font-mono text-sm">{c.totalInvoices}</TableCell>
-              <TableCell className="text-right font-mono">{formatCurrency(c.totalRevenue)}</TableCell>
+              <TableCell className="text-sm text-muted-foreground hidden sm:table-cell">{c.company || "—"}</TableCell>
+              <TableCell className="text-sm text-muted-foreground hidden md:table-cell">{c.email}</TableCell>
+              <TableCell className="text-right font-mono text-sm hidden lg:table-cell">{c.totalInvoices}</TableCell>
+              <TableCell className="text-right font-mono text-sm font-medium">{formatCurrency(c.totalRevenue)}</TableCell>
               <TableCell>
-                <Badge variant={c.isActive ? "default" : "secondary"}>
-                  {c.isActive ? "Aktif" : "Tidak Aktif"}
+                <Badge variant={c.isActive ? "default" : "secondary"} className="text-xs">
+                  {c.isActive ? "Aktif" : "Nonaktif"}
                 </Badge>
               </TableCell>
               <TableCell>

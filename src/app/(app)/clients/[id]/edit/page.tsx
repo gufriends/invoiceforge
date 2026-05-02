@@ -22,14 +22,14 @@ export default function EditClientPage({ params }: { params: Promise<{ id: strin
   };
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/clients/${id}`}><ArrowLeft className="h-5 w-5" /></Link>
+    <div className="space-y-4 max-w-screen-md">
+      <div className="flex items-center gap-2.5">
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" asChild>
+          <Link href={`/clients/${id}`}><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Edit Klien</h1>
-          <p className="text-sm text-muted-foreground">Perbarui data klien</p>
+          <h1 className="text-xl font-semibold tracking-tight">Edit Klien</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Perbarui data klien.</p>
         </div>
       </div>
       {isLoading || !client ? (

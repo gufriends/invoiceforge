@@ -115,21 +115,23 @@ export const paymentSchema = z.object({
 });
 
 // COMPANY
+const optStr = (max = 500) => z.string().max(max).optional().or(z.literal("")).nullable().transform((v) => v ?? "");
+
 export const companySchema = z.object({
   name: z.string().min(2, "Nama perusahaan minimal 2 karakter").max(150),
-  logo: z.string().optional().or(z.literal("")),
-  address: z.string().max(500).optional().or(z.literal("")),
-  city: z.string().max(100).optional().or(z.literal("")),
-  province: z.string().max(100).optional().or(z.literal("")),
-  postalCode: z.string().max(10).optional().or(z.literal("")),
+  logo: optStr(),
+  address: optStr(500),
+  city: optStr(100),
+  province: optStr(100),
+  postalCode: optStr(10),
   country: z.string().default("Indonesia"),
-  phone: z.string().max(20).optional().or(z.literal("")),
-  email: z.string().email("Format email tidak valid").optional().or(z.literal("")),
-  website: z.string().url("Format URL tidak valid").optional().or(z.literal("")),
-  npwp: z.string().optional().or(z.literal("")),
-  bankName: z.string().max(100).optional().or(z.literal("")),
-  bankAccount: z.string().max(50).optional().or(z.literal("")),
-  bankHolder: z.string().max(150).optional().or(z.literal("")),
+  phone: optStr(20),
+  email: z.string().email("Format email tidak valid").optional().or(z.literal("")).nullable().transform((v) => v ?? ""),
+  website: z.string().url("Format URL tidak valid").optional().or(z.literal("")).nullable().transform((v) => v ?? ""),
+  npwp: optStr(),
+  bankName: optStr(100),
+  bankAccount: optStr(50),
+  bankHolder: optStr(150),
   invoicePrefix: z.string().min(1).max(10).default("INV"),
   invoiceTemplate: z.enum(INVOICE_TEMPLATES).default("modern"),
   primaryColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Format warna #RRGGBB").default("#2563eb"),

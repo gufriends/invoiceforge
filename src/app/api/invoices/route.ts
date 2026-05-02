@@ -12,7 +12,7 @@ const listSchema = z.object({
   clientId: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
-  sortBy: z.enum(["invoiceNumber", "issueDate", "dueDate", "total", "createdAt"]).default("createdAt"),
+  sortBy: z.enum(["invoiceNumber", "issueDate", "dueDate", "total", "createdAt", "clientName"]).default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
 });
 

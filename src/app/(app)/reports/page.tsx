@@ -1,11 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { Download, Wallet, Receipt, AlertCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useAgingReport } from "@/hooks/use-analytics";
 import { apiFetch } from "@/lib/api-client";
 import { formatCurrency } from "@/utils/format-currency";
@@ -33,26 +40,38 @@ export default function ReportsPage() {
   const { data: aging } = useAgingReport();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 max-w-screen-xl">
+      {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold">Laporan</h1>
-        <p className="text-sm text-muted-foreground">Laporan keuangan & tagihan</p>
+        <h1 className="text-xl font-semibold tracking-tight">Laporan</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">Laporan keuangan & tagihan.</p>
       </div>
 
       <Tabs defaultValue="income">
-        <TabsList>
-          <TabsTrigger value="income"><Wallet className="mr-2 h-4 w-4" /> Pendapatan</TabsTrigger>
-          <TabsTrigger value="tax"><Receipt className="mr-2 h-4 w-4" /> PPN</TabsTrigger>
-          <TabsTrigger value="aging"><AlertCircle className="mr-2 h-4 w-4" /> Aging</TabsTrigger>
+        <TabsList className="h-8">
+          <TabsTrigger value="income" className="text-xs gap-1.5">
+            <Wallet className="h-3.5 w-3.5" /> Pendapatan
+          </TabsTrigger>
+          <TabsTrigger value="tax" className="text-xs gap-1.5">
+            <Receipt className="h-3.5 w-3.5" /> PPN
+          </TabsTrigger>
+          <TabsTrigger value="aging" className="text-xs gap-1.5">
+            <AlertCircle className="h-3.5 w-3.5" /> Aging
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="income">
+        {/* ── Pendapatan ── */}
+        <TabsContent value="income" className="mt-4">
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Laporan Pendapatan</CardTitle>
+            <CardHeader className="pb-3 flex flex-row items-start justify-between">
+              <div>
+                <CardTitle className="text-base">Laporan Pendapatan</CardTitle>
+                <CardDescription>Semua pembayaran yang diterima</CardDescription>
+              </div>
               <Button
                 variant="outline"
                 size="sm"
+                className="h-7 text-xs"
                 onClick={() => {
                   if (!income) return;
                   exportCsv(
@@ -74,106 +93,114 @@ export default function ReportsPage() {
                   );
                 }}
               >
-                <Download className="mr-2 h-4 w-4" /> Export CSV
+                <Download className="h-3.5 w-3.5 mr-1.5" /> Export CSV
               </Button>
             </CardHeader>
-            <CardContent>
-              <div className="mb-4 rounded-md bg-muted/30 p-4">
-                <div className="text-xs uppercase text-muted-foreground">Total Pendapatan</div>
-                <div className="text-2xl font-bold font-mono">{formatCurrency(income?.total ?? 0)}</div>
+            <CardContent className="space-y-4">
+              <div className="rounded-md bg-muted/40 px-4 py-3">
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">Total Pendapatan</p>
+                <p className="text-2xl font-bold font-mono mt-0.5">{formatCurrency(income?.total ?? 0)}</p>
               </div>
-              <div className="rounded-md border overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 text-xs uppercase">
-                    <tr>
-                      <th className="p-3 text-left">Tanggal</th>
-                      <th className="p-3 text-left">Invoice</th>
-                      <th className="p-3 text-left">Klien</th>
-                      <th className="p-3 text-left">Metode</th>
-                      <th className="p-3 text-right">Jumlah</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="h-8">
+                      <TableHead className="text-xs font-medium">Tanggal</TableHead>
+                      <TableHead className="text-xs font-medium">Invoice</TableHead>
+                      <TableHead className="text-xs font-medium hidden sm:table-cell">Klien</TableHead>
+                      <TableHead className="text-xs font-medium hidden md:table-cell">Metode</TableHead>
+                      <TableHead className="text-xs font-medium text-right">Jumlah</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {income?.payments.map((p: any) => (
-                      <tr key={p.id}>
-                        <td className="p-3">{formatDate(p.date)}</td>
-                        <td className="p-3 font-mono">{p.invoice.invoiceNumber}</td>
-                        <td className="p-3">{p.invoice.client.name}</td>
-                        <td className="p-3">{PAYMENT_METHOD_LABELS[p.method as keyof typeof PAYMENT_METHOD_LABELS]}</td>
-                        <td className="p-3 text-right font-mono">{formatCurrency(p.amount)}</td>
-                      </tr>
+                      <TableRow key={p.id} className="h-9">
+                        <TableCell className="text-xs text-muted-foreground">{formatDate(p.date)}</TableCell>
+                        <TableCell className="font-mono text-xs">{p.invoice.invoiceNumber}</TableCell>
+                        <TableCell className="text-xs hidden sm:table-cell">{p.invoice.client.name}</TableCell>
+                        <TableCell className="text-xs hidden md:table-cell">{PAYMENT_METHOD_LABELS[p.method as keyof typeof PAYMENT_METHOD_LABELS]}</TableCell>
+                        <TableCell className="text-right font-mono text-sm font-medium">{formatCurrency(p.amount)}</TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="tax">
+        {/* ── PPN ── */}
+        <TabsContent value="tax" className="mt-4">
           <Card>
-            <CardHeader><CardTitle>Laporan PPN</CardTitle></CardHeader>
-            <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2 mb-4">
-                <div className="rounded-md bg-muted/30 p-4">
-                  <div className="text-xs uppercase text-muted-foreground">Total DPP</div>
-                  <div className="text-2xl font-bold font-mono">{formatCurrency(tax?.totalDPP ?? 0)}</div>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Laporan PPN</CardTitle>
+              <CardDescription>Rekapitulasi pajak pertambahan nilai</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="rounded-md bg-muted/40 px-4 py-3">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Total DPP</p>
+                  <p className="text-2xl font-bold font-mono mt-0.5">{formatCurrency(tax?.totalDPP ?? 0)}</p>
                 </div>
-                <div className="rounded-md bg-primary/10 p-4">
-                  <div className="text-xs uppercase text-primary">Total PPN</div>
-                  <div className="text-2xl font-bold font-mono text-primary">{formatCurrency(tax?.totalTax ?? 0)}</div>
+                <div className="rounded-md bg-primary/10 px-4 py-3">
+                  <p className="text-xs text-primary uppercase tracking-wide">Total PPN</p>
+                  <p className="text-2xl font-bold font-mono text-primary mt-0.5">{formatCurrency(tax?.totalTax ?? 0)}</p>
                 </div>
               </div>
-              <div className="rounded-md border overflow-hidden">
-                <table className="w-full text-sm">
-                  <thead className="bg-muted/50 text-xs uppercase">
-                    <tr>
-                      <th className="p-3 text-left">Tanggal</th>
-                      <th className="p-3 text-left">Invoice</th>
-                      <th className="p-3 text-left">Klien</th>
-                      <th className="p-3 text-right">DPP</th>
-                      <th className="p-3 text-right">PPN</th>
-                      <th className="p-3 text-right">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="h-8">
+                      <TableHead className="text-xs font-medium">Tanggal</TableHead>
+                      <TableHead className="text-xs font-medium">Invoice</TableHead>
+                      <TableHead className="text-xs font-medium hidden sm:table-cell">Klien</TableHead>
+                      <TableHead className="text-xs font-medium text-right hidden md:table-cell">DPP</TableHead>
+                      <TableHead className="text-xs font-medium text-right">PPN</TableHead>
+                      <TableHead className="text-xs font-medium text-right">Total</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {tax?.invoices.map((inv: any, i: number) => (
-                      <tr key={i}>
-                        <td className="p-3">{formatDate(inv.issueDate)}</td>
-                        <td className="p-3 font-mono">{inv.invoiceNumber}</td>
-                        <td className="p-3">{inv.client.name}</td>
-                        <td className="p-3 text-right font-mono">{formatCurrency(inv.subtotal)}</td>
-                        <td className="p-3 text-right font-mono">{formatCurrency(inv.taxAmount)}</td>
-                        <td className="p-3 text-right font-mono">{formatCurrency(inv.total)}</td>
-                      </tr>
+                      <TableRow key={i} className="h-9">
+                        <TableCell className="text-xs text-muted-foreground">{formatDate(inv.issueDate)}</TableCell>
+                        <TableCell className="font-mono text-xs">{inv.invoiceNumber}</TableCell>
+                        <TableCell className="text-xs hidden sm:table-cell">{inv.client.name}</TableCell>
+                        <TableCell className="text-right font-mono text-xs hidden md:table-cell">{formatCurrency(inv.subtotal)}</TableCell>
+                        <TableCell className="text-right font-mono text-sm">{formatCurrency(inv.taxAmount)}</TableCell>
+                        <TableCell className="text-right font-mono text-sm font-medium">{formatCurrency(inv.total)}</TableCell>
+                      </TableRow>
                     ))}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="aging">
+        {/* ── Aging ── */}
+        <TabsContent value="aging" className="mt-4">
           <Card>
-            <CardHeader><CardTitle>Aging Piutang</CardTitle></CardHeader>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Aging Piutang</CardTitle>
+              <CardDescription>Distribusi tagihan berdasarkan umur keterlambatan</CardDescription>
+            </CardHeader>
             <CardContent>
-              <div className="grid gap-4 sm:grid-cols-4">
-                <div className="rounded-md border p-4">
-                  <div className="text-xs uppercase text-muted-foreground">Belum Jatuh Tempo</div>
-                  <div className="text-xl font-bold font-mono">{formatCurrency(aging?.current ?? 0)}</div>
+              <div className="grid gap-3 sm:grid-cols-4">
+                <div className="rounded-md border px-4 py-3">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Belum Jatuh Tempo</p>
+                  <p className="text-xl font-bold font-mono mt-1">{formatCurrency(aging?.current ?? 0)}</p>
                 </div>
-                <div className="rounded-md border bg-yellow-50 dark:bg-yellow-900/20 p-4">
-                  <div className="text-xs uppercase text-yellow-700 dark:text-yellow-400">1 - 30 hari</div>
-                  <div className="text-xl font-bold font-mono">{formatCurrency(aging?.thirtyDays ?? 0)}</div>
+                <div className="rounded-md border bg-amber-50 dark:bg-amber-900/20 px-4 py-3">
+                  <p className="text-xs text-amber-700 dark:text-amber-400 uppercase tracking-wide">1 – 30 hari</p>
+                  <p className="text-xl font-bold font-mono mt-1">{formatCurrency(aging?.thirtyDays ?? 0)}</p>
                 </div>
-                <div className="rounded-md border bg-orange-50 dark:bg-orange-900/20 p-4">
-                  <div className="text-xs uppercase text-orange-700 dark:text-orange-400">31 - 60 hari</div>
-                  <div className="text-xl font-bold font-mono">{formatCurrency(aging?.sixtyDays ?? 0)}</div>
+                <div className="rounded-md border bg-orange-50 dark:bg-orange-900/20 px-4 py-3">
+                  <p className="text-xs text-orange-700 dark:text-orange-400 uppercase tracking-wide">31 – 60 hari</p>
+                  <p className="text-xl font-bold font-mono mt-1">{formatCurrency(aging?.sixtyDays ?? 0)}</p>
                 </div>
-                <div className="rounded-md border bg-red-50 dark:bg-red-900/20 p-4">
-                  <div className="text-xs uppercase text-red-700 dark:text-red-400">60+ hari</div>
-                  <div className="text-xl font-bold font-mono">{formatCurrency(aging?.ninetyPlusDays ?? 0)}</div>
+                <div className="rounded-md border bg-red-50 dark:bg-red-900/20 px-4 py-3">
+                  <p className="text-xs text-red-700 dark:text-red-400 uppercase tracking-wide">60+ hari</p>
+                  <p className="text-xl font-bold font-mono mt-1">{formatCurrency(aging?.ninetyPlusDays ?? 0)}</p>
                 </div>
               </div>
             </CardContent>

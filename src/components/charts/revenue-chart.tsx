@@ -1,48 +1,69 @@
 "use client";
 
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { useTheme } from "next-themes";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 import { formatCurrency } from "@/utils/format-currency";
 import type { RevenueDataPoint } from "@/types/analytics";
 
-const monthsID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+const MONTHS_ID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+const chartConfig: ChartConfig = {
+  revenue: { label: "Pendapatan", color: "var(--chart-1)" },
+};
 
 export function RevenueChart({ data }: { data: RevenueDataPoint[] }) {
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
-  const gridColor = isDark ? "#334155" : "#e2e8f0";
-  const axisColor = isDark ? "#94a3b8" : "#64748b";
-  const tooltipBg = isDark ? "#1e293b" : "#ffffff";
-  const tooltipBorder = isDark ? "#334155" : "#e2e8f0";
-
   const formatted = data.map((d) => {
     const [y, m] = d.period.split("-");
-    return { ...d, label: `${monthsID[Number(m) - 1]} ${y.slice(2)}` };
+    return { ...d, label: `${MONTHS_ID[Number(m) - 1]} ${y.slice(2)}` };
   });
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <AreaChart data={formatted}>
+    <ChartContainer config={chartConfig} className="h-[280px] w-full">
+      <AreaChart data={formatted} margin={{ top: 4, right: 4, bottom: 0, left: 0 }}>
         <defs>
-          <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+          <linearGradient id="rev-fill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="var(--color-revenue)" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="var(--color-revenue)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
-        <XAxis dataKey="label" stroke={axisColor} fontSize={12} />
-        <YAxis stroke={axisColor} fontSize={12} tickFormatter={(v) => formatCurrency(v, "IDR", { compact: true })} />
-        <Tooltip
-          formatter={(v: number) => [formatCurrency(v), "Pendapatan"]}
-          contentStyle={{
-            backgroundColor: tooltipBg,
-            borderRadius: 8,
-            border: `1px solid ${tooltipBorder}`,
-            fontSize: 12,
-          }}
+        <CartesianGrid vertical={false} strokeDasharray="3 3" />
+        <XAxis
+          dataKey="label"
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11 }}
+          dy={4}
         />
-        <Area type="monotone" dataKey="revenue" stroke="#3b82f6" fill="url(#rev)" strokeWidth={2} />
+        <YAxis
+          tickLine={false}
+          axisLine={false}
+          tick={{ fontSize: 11 }}
+          tickFormatter={(v) => formatCurrency(v, "IDR", { compact: true })}
+          width={60}
+        />
+        <ChartTooltip
+          content={
+            <ChartTooltipContent
+              formatter={(v) => [formatCurrency(Number(v ?? 0), "IDR"), "Pendapatan"]}
+              labelClassName="font-medium"
+            />
+          }
+        />
+        <Area
+          type="monotone"
+          dataKey="revenue"
+          stroke="var(--color-revenue)"
+          strokeWidth={2}
+          fill="url(#rev-fill)"
+          dot={false}
+          activeDot={{ r: 4, strokeWidth: 0 }}
+        />
       </AreaChart>
-    </ResponsiveContainer>
+    </ChartContainer>
   );
 }

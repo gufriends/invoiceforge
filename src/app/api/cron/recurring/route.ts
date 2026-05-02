@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getNextInvoiceNumber } from "@/utils/generate-invoice-number";
+import { notificationService } from "@/services/notification.service";
 import type { RecurringCycle } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
@@ -109,6 +110,15 @@ export async function GET(req: Request) {
         });
 
         created.push(newInvoice.id);
+      });
+
+      const client = await prisma.client.findUnique({ where: { id: original.clientId } });
+      await notificationService.create(original.userId, {
+        type: "RECURRING_GENERATED",
+        title: "Invoice Berulang Dibuat",
+        message: `Invoice baru untuk ${client?.name ?? "klien"} telah digenerate otomatis`,
+        link: `/invoices/${created[created.length - 1]}`,
+        metadata: { invoiceId: created[created.length - 1], originalId: original.id },
       });
     } catch (e) {
       errors.push({

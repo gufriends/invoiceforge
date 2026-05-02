@@ -33,39 +33,39 @@ interface Props {
 }
 
 export function InvoicesTable({ data, loading, onDelete, onDuplicate, onSend }: Props) {
-  if (loading) return <TableSkeleton rows={6} />;
+  if (loading) return <TableSkeleton rows={8} />;
 
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border bg-card">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>No. Invoice</TableHead>
-            <TableHead>Klien</TableHead>
-            <TableHead>Tgl Terbit</TableHead>
-            <TableHead>Jatuh Tempo</TableHead>
-            <TableHead className="text-right">Total</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="w-12"></TableHead>
+          <TableRow className="h-9">
+            <TableHead className="text-xs font-medium">No. Invoice</TableHead>
+            <TableHead className="text-xs font-medium">Klien</TableHead>
+            <TableHead className="text-xs font-medium hidden sm:table-cell">Tgl Terbit</TableHead>
+            <TableHead className="text-xs font-medium hidden md:table-cell">Jatuh Tempo</TableHead>
+            <TableHead className="text-xs font-medium text-right">Total</TableHead>
+            <TableHead className="text-xs font-medium">Status</TableHead>
+            <TableHead className="w-10"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.map((inv) => (
-            <TableRow key={inv.id} className="hover:bg-muted/50">
+            <TableRow key={inv.id} className="h-10 hover:bg-muted/40">
               <TableCell>
-                <Link href={`/invoices/${inv.id}`} className="font-mono text-sm font-medium hover:underline">
+                <Link href={`/invoices/${inv.id}`} className="font-mono text-xs font-medium hover:underline text-foreground">
                   {inv.invoiceNumber}
                 </Link>
               </TableCell>
               <TableCell>
-                <div className="text-sm">
-                  <div className="font-medium">{inv.client.name}</div>
-                  {inv.client.company && <div className="text-xs text-muted-foreground">{inv.client.company}</div>}
+                <div>
+                  <div className="text-sm font-medium leading-none">{inv.client.name}</div>
+                  {inv.client.company && <div className="text-xs text-muted-foreground mt-0.5">{inv.client.company}</div>}
                 </div>
               </TableCell>
-              <TableCell className="text-sm">{formatDate(inv.issueDate)}</TableCell>
-              <TableCell className="text-sm">{formatDate(inv.dueDate)}</TableCell>
-              <TableCell className="text-right font-mono">{formatCurrency(inv.total)}</TableCell>
+              <TableCell className="text-xs text-muted-foreground hidden sm:table-cell">{formatDate(inv.issueDate)}</TableCell>
+              <TableCell className="text-xs text-muted-foreground hidden md:table-cell">{formatDate(inv.dueDate)}</TableCell>
+              <TableCell className="text-right font-mono text-sm font-medium">{formatCurrency(inv.total)}</TableCell>
               <TableCell><InvoiceStatusBadge status={inv.status} size="sm" /></TableCell>
               <TableCell>
                 <DropdownMenu>

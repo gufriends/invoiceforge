@@ -27,50 +27,50 @@ export const clientService = {
         : {}),
     };
 
-    const [clients, total] = await Promise.all([
-      prisma.client.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
-        orderBy: sortBy === "totalRevenue" ? undefined : { [sortBy]: sortOrder },
-        include: {
-          _count: { select: { invoices: true } },
-          invoices: {
-            select: { total: true, paidAmount: true, status: true, createdAt: true },
-          },
-        },
-      }),
-      prisma.client.count({ where }),
-    ]);
+    const includeFields = {
+      _count: { select: { invoices: true } },
+      invoices: {
+        select: { total: true, paidAmount: true, status: true, createdAt: true },
+      },
+    };
 
-    const enriched = clients.map((c) => {
-      const totalRevenue = c.invoices.reduce(
-        (sum, inv) => (inv.status === "PAID" || inv.status === "PARTIAL" ? sum + inv.paidAmount : sum),
-        0
-      );
-      const outstandingAmount = c.invoices.reduce(
-        (sum, inv) => (inv.status !== "CANCELLED" ? sum + (inv.total - inv.paidAmount) : sum),
-        0
-      );
-      const lastInvoiceDate = c.invoices.reduce<Date | null>(
-        (latest, inv) => (!latest || inv.createdAt > latest ? inv.createdAt : latest),
-        null
-      );
-      const { invoices, _count, ...rest } = c;
-      return {
-        ...rest,
-        totalInvoices: _count.invoices,
-        totalRevenue,
-        outstandingAmount,
-        lastInvoiceDate,
-      };
-    });
+    const enrich = (clients: Awaited<ReturnType<typeof prisma.client.findMany<{ include: typeof includeFields }>>>) =>
+      clients.map((c) => {
+        const totalRevenue = c.invoices.reduce(
+          (sum, inv) => (inv.status === "PAID" || inv.status === "PARTIAL" ? sum + inv.paidAmount : sum),
+          0
+        );
+        const outstandingAmount = c.invoices.reduce(
+          (sum, inv) => (inv.status !== "CANCELLED" ? sum + (inv.total - inv.paidAmount) : sum),
+          0
+        );
+        const lastInvoiceDate = c.invoices.reduce<Date | null>(
+          (latest, inv) => (!latest || inv.createdAt > latest ? inv.createdAt : latest),
+          null
+        );
+        const { invoices, _count, ...rest } = c;
+        return { ...rest, totalInvoices: _count.invoices, totalRevenue, outstandingAmount, lastInvoiceDate };
+      });
+
+    const total = await prisma.client.count({ where });
 
     if (sortBy === "totalRevenue") {
-      enriched.sort((a, b) => (sortOrder === "asc" ? a.totalRevenue - b.totalRevenue : b.totalRevenue - a.totalRevenue));
+      const allClients = await prisma.client.findMany({ where, include: includeFields });
+      const enriched = enrich(allClients);
+      enriched.sort((a, b) => sortOrder === "asc" ? a.totalRevenue - b.totalRevenue : b.totalRevenue - a.totalRevenue);
+      const sliced = enriched.slice((page - 1) * limit, page * limit);
+      return { data: sliced, total };
     }
 
-    return { data: enriched, total };
+    const clients = await prisma.client.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy: { [sortBy]: sortOrder },
+      include: includeFields,
+    });
+
+    return { data: enrich(clients), total };
   },
 
   async getById(userId: string, id: string) {

@@ -38,14 +38,14 @@ export default function EditInvoicePage({ params }: { params: Promise<{ id: stri
   if (isLoading || !invoice) return <FormSkeleton />;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/invoices/${id}`}><ArrowLeft className="h-5 w-5" /></Link>
+    <div className="space-y-4 max-w-screen-lg">
+      <div className="flex items-center gap-2.5">
+        <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" asChild>
+          <Link href={`/invoices/${id}`}><ArrowLeft className="h-4 w-4" /></Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Edit Invoice</h1>
-          <p className="text-sm text-muted-foreground">{invoice.invoiceNumber}</p>
+          <h1 className="text-xl font-semibold tracking-tight">Edit Invoice</h1>
+          <p className="text-sm text-muted-foreground mt-0.5 font-mono">{invoice.invoiceNumber}</p>
         </div>
       </div>
       <InvoiceForm

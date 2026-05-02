@@ -9,3 +9,8 @@ dev.db-journal
 playwright-report/
 test-results/
 e2e/.auth/
+.env
+bun.lock
+package-lock.json
+public/uploads/
+
